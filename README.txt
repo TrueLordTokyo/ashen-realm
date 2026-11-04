@@ -1,18 +1,18 @@
 SMOOTH FOREST
 
-Real Roblox terrain. About four times the old map.
-Ashmere meadow, Highwatch peak, Stillwater lake and its island,
-the Drown marsh, the Cut ravine and its fall, Greycove beach, Salt Isle.
+Real Roblox terrain. The land is about twice as long and twice as wide as the last one.
+The woods are denser, and tree roots are sunk into the ground.
+The rock ring is gone.
+A river runs through the southwest corner, from the west edge out the south edge.
 
-Generate it again. The old land gets replaced.
+Generate it again. The old land gets replaced. This pass takes several minutes.
 
-  1. Open Drenchwood.rbxlx.
-  2. Do not press Play.
-  3. View → Command Bar.
-  4. Paste and press Enter:
+  1. Open Drenchwood.rbxlx. Do not press Play.
+  2. View → Command Bar.
+  3. Paste and press Enter:
 
      require(game.ReplicatedStorage.Forest).grow()
 
-  5. It takes a few minutes. Wait for Done.
-  6. File → Save.
-  7. Press Play. You start in Ashmere. The peak is northwest. The sea is east.
+  4. Wait for Done.
+  5. File → Save.
+  6. Press Play. You start in Ashmere. The sea is still east. The river is the far southwest corner.

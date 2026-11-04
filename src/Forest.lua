@@ -10,8 +10,8 @@ local Forest = {}
 
 local SEED = 90411
 local VOXEL = 4
-local MIN_X, MAX_X = -1280, 1280
-local MIN_Z, MAX_Z = -1280, 1280
+local MIN_X, MAX_X = -2560, 2560
+local MIN_Z, MAX_Z = -2560, 2560
 local MIN_Y, MAX_Y = 0, 160
 local CHUNK = 128
 local SEA = 22
@@ -23,13 +23,12 @@ local SCENERY_IDS = {
 }
 
 local PATH = {
-	Vector3.new(-860, 0, -180),
-	Vector3.new(-520, 0, -40),
-	Vector3.new(-200, 0, 40),
-	Vector3.new(40, 0, 90),
-	Vector3.new(240, 0, 180),
-	Vector3.new(480, 0, 300),
-	Vector3.new(700, 0, 400),
+	Vector3.new(-1700, 0, -400),
+	Vector3.new(-1000, 0, -80),
+	Vector3.new(-400, 0, 80),
+	Vector3.new(200, 0, 220),
+	Vector3.new(900, 0, 420),
+	Vector3.new(1600, 0, 680),
 }
 
 local function smoothstep(a, b, x)
@@ -93,9 +92,9 @@ end
 local function baseShape(x, z)
 	local n = noise(x * 0.0021, z * 0.0021) * 0.58 + noise(x * 0.0054 + 2, z * 0.0054) * 0.42
 	local h = 36 + n * 18
-	local peak = math.exp(-((x + 860) ^ 2) / 32000) * math.exp(-((z + 180) ^ 2) / 24000)
-	h += peak * 64
-	local drop = smoothstep(660, 920, x)
+	local peak = math.exp(-((x + 1700) ^ 2) / 70000) * math.exp(-((z + 400) ^ 2) / 52000)
+	h += peak * 70
+	local drop = smoothstep(1760, 2200, x)
 	h = h * (1 - drop) + (SEA - 14) * drop
 	return h, drop, n, peak
 end
@@ -103,15 +102,15 @@ end
 local function column(x, z)
 	local h, drop, n, peak = baseShape(x, z)
 
-	local open = disk(x, z, -200, 40, 150, 120)
-	local heath = disk(x, z, -700, -780, 300, 220)
-	local hollow = disk(x, z, -760, 560, 170, 140)
-	local marsh, marshD = disk(x, z, 60, -900, 360, 260)
-	local lake, lakeD = disk(x, z, -60, 820, 190, 160)
-	local isleInLake = disk(x, z, -60, 820, 34, 28)
-	local cove = disk(x, z, 780, 460, 180, 120)
-	local salt = disk(x, z, 1120, -40, 100, 78)
-	local ring = disk(x, z, 240, 180, 46, 46)
+	local open = disk(x, z, -400, 80, 170, 140)
+	local heath = disk(x, z, -1100, -1200, 340, 240)
+	local hollow = disk(x, z, -1500, 980, 200, 160)
+	local marsh = disk(x, z, 180, -1680, 420, 300)
+	local lake, lakeD = disk(x, z, -180, 1560, 230, 190)
+	local isleInLake = disk(x, z, -180, 1560, 40, 32)
+	local cove = disk(x, z, 1980, 780, 200, 140)
+	local salt = disk(x, z, 2360, -180, 110, 86)
+	local riverD = segmentDist(x, z, -2560, -1880, -1680, -2560)
 
 	h -= hollow * 12
 	if heath > 0 then
@@ -120,13 +119,12 @@ local function column(x, z)
 	if open > 0 then
 		h = h * (1 - open * 0.35) + 30 * (open * 0.35)
 	end
-	h += ring * 5
 
-	local ravineD, ravineT = segmentDist(x, z, -500, -460, 500, -70)
+	local ravineD, ravineT = segmentDist(x, z, -800, -640, 1760, -90)
 	local inRavine = ravineD < 34
 	if inRavine then
 		local u = 1 - ravineD / 34
-		local floorH = 40 - smoothstep(400, 530, x) * 24
+		local floorH = 42 - smoothstep(1520, 1760, x) * 26
 		h -= u * u * math.max(0, h - floorH)
 	end
 
@@ -145,11 +143,17 @@ local function column(x, z)
 	end
 
 	if salt > 0 then
-		h = math.max(h, (SEA - 4) + salt * salt * 28)
+		h = math.max(h, (SEA - 4) + salt * salt * 32)
+	end
+
+	if riverD < 96 then
+		local u = 1 - riverD / 96
+		local bed = 14 + (1 - u) * 12
+		h = h * (1 - u) + bed * u
 	end
 
 	local pathD = distToPath(x, z)
-	if pathD < 10 and x < 760 and lakeD > 1 and marsh < 0.4 then
+	if pathD < 10 and x < 1800 and lakeD > 1 and marsh < 0.4 and riverD > 40 then
 		h -= (1 - pathD / 10) * 1.1
 	end
 
@@ -165,11 +169,15 @@ local function column(x, z)
 	if inRavine and ravineD < 10 and ravineT < 0.92 then
 		water = math.max(water or 0, h + 2.2)
 	end
+	if riverD < 36 then
+		h = math.min(h, 15)
+		water = math.max(water or 0, 26)
+	end
 	if marsh > 0.4 and noise(x * 0.018, z * 0.018) > 0.52 then
 		h = SEA + 0.4
 		water = SEA + 2.6
 	end
-	if x > 760 and h < SEA then
+	if x > 1980 and h < SEA then
 		water = math.max(water or 0, SEA)
 	end
 
@@ -179,28 +187,28 @@ local function column(x, z)
 	local ravineWall = inRavine and ravineD > 8 and ravineD < 30
 
 	local mat = Enum.Material.Grass
-	if salt > 0.15 and h < SEA + 6 then
+	if riverD < 58 or marsh > 0.25 or (inRavine and ravineD < 12) or (lakeD < 1.15 and isleInLake <= 0) then
+		mat = Enum.Material.Mud
+	elseif salt > 0.15 and h < SEA + 6 then
 		mat = Enum.Material.Sand
 	elseif cove > 0.25 or (drop > 0.45 and h < SEA + 6) then
 		mat = Enum.Material.Sand
 	elseif peak > 0.35 or slope > 14 or ravineWall or (drop > 0.25 and drop < 0.85 and slope > 6) then
 		mat = Enum.Material.Rock
-	elseif marsh > 0.25 or (inRavine and ravineD < 12) or (lakeD < 1.15 and isleInLake <= 0) then
+	elseif pathD < 6 and x < 1800 then
 		mat = Enum.Material.Mud
-	elseif pathD < 6 and x < 760 then
-		mat = Enum.Material.Mud
-	elseif open < 0.2 and heath < 0.2 and (hollow > 0.2 or n > 0.48) then
+	elseif open < 0.2 and heath < 0.2 and (hollow > 0.15 or n > 0.3) then
 		mat = Enum.Material.LeafyGrass
 	end
 
-	local trees = 0.7
-	trees -= open * 1.15
-	trees -= heath * 0.75
+	local trees = 0.96
+	trees -= open * 1.2
+	trees -= heath * 0.5
 	trees -= marsh * 0.9
-	trees += hollow * 0.4
-	trees -= smoothstep(680, 900, x) * 0.9
-	if lakeD < 1 or (inRavine and ravineD < 12) or pathD < 8 then
-		trees -= 0.6
+	trees += hollow * 0.25
+	trees -= smoothstep(1760, 2200, x) * 0.95
+	if lakeD < 1 or riverD < 42 or (inRavine and ravineD < 12) or pathD < 8 then
+		trees -= 0.7
 	end
 	if salt > 0.4 then
 		trees = math.max(trees, 0.25)
@@ -220,7 +228,7 @@ local function applyLook()
 	Lighting.GlobalShadows = true
 	Lighting.FogColor = Color3.fromRGB(186, 196, 188)
 	Lighting.FogStart = 120
-	Lighting.FogEnd = 1600
+	Lighting.FogEnd = 2400
 	pcall(function()
 		Lighting.Technology = Enum.Technology.Future
 	end)
@@ -361,12 +369,12 @@ local function writeLand()
 	end
 end
 
-local function groundAt(x, z)
+local function groundAt(x, z, minSlope)
 	local hit = workspace:Raycast(Vector3.new(x, 900, z), Vector3.new(0, -1200, 0))
 	if not hit or hit.Instance ~= workspace.Terrain then
 		return nil
 	end
-	if hit.Material == Enum.Material.Water or hit.Normal.Y < 0.78 then
+	if hit.Material == Enum.Material.Water or hit.Normal.Y < (minSlope or 0.78) then
 		return nil
 	end
 	return hit.Position, hit.Material
@@ -435,26 +443,42 @@ local function scatter(templates, rng)
 
 	local placed = 0
 	local tries = 0
-	while placed < 460 and tries < 3200 do
+	while placed < 1500 and tries < 9000 do
 		tries += 1
-		local x = rng:NextNumber(-1150, 900)
-		local z = rng:NextNumber(-1150, 1150)
+		local x = rng:NextNumber(-2400, 1900)
+		local z = rng:NextNumber(-2400, 2400)
 		local _, _, _, trees = column(x, z)
-		if trees > 0.35 and rng:NextNumber() < trees then
-			local pos = groundAt(x, z)
+		if trees > 0.18 and rng:NextNumber() < trees then
+			local pos = groundAt(x, z, 0.86)
 			if pos and pos.Y > SEA + 2 then
 				local template = templates[rng:NextInteger(1, #templates)]
 				local clone = template:Clone()
 				clone.Parent = folder
 				pcall(function()
-					clone:ScaleTo(rng:NextNumber(0.75, 1.45))
+					clone:ScaleTo(rng:NextNumber(0.8, 1.35))
 				end)
 				clone:PivotTo(CFrame.new(pos) * CFrame.Angles(0, rng:NextNumber(0, math.pi * 2), 0))
 				local boundsCF, boundsSize = clone:GetBoundingBox()
 				local bottom = boundsCF.Position.Y - boundsSize.Y / 2
-				clone:PivotTo(clone:GetPivot() + Vector3.new(0, pos.Y - bottom, 0))
+				local planted = pos.Y
+				for _, off in ipairs({
+					Vector3.new(7, 0, 0),
+					Vector3.new(-7, 0, 0),
+					Vector3.new(0, 0, 7),
+					Vector3.new(0, 0, -7),
+				}) do
+					local near = groundAt(pos.X + off.X, pos.Z + off.Z, 0.5)
+					if near then
+						planted = math.min(planted, near.Y)
+					end
+				end
+				local sink = math.clamp(boundsSize.Y * 0.07, 1.5, 8)
+				if boundsSize.Y > 20 then
+					sink = math.max(sink, 4.5)
+				end
+				clone:PivotTo(clone:GetPivot() + Vector3.new(0, planted - bottom - sink, 0))
 				placed += 1
-				if placed % 15 == 0 then
+				if placed % 20 == 0 then
 					task.wait()
 				end
 			end
@@ -468,7 +492,7 @@ local function addSpawn()
 	if old then
 		old:Destroy()
 	end
-	local pos = groundAt(-200, 40) or Vector3.new(-200, 40, 40)
+	local pos = groundAt(-400, 80) or Vector3.new(-400, 40, 80)
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "ForestSpawn"
 	spawn.Anchored = true
@@ -482,43 +506,32 @@ local function addSpawn()
 end
 
 local function landmarks(terrain, rng)
-	for i = 1, 10 do
-		local angle = (i / 10) * math.pi * 2
-		local x = 240 + math.cos(angle) * 30
-		local z = 180 + math.sin(angle) * 30
-		local pos = groundAt(x, z)
-		if pos then
-			terrain:FillBall(pos + Vector3.new(0, 7, 0), rng:NextNumber(4.5, 7.5), Enum.Material.Rock)
-		end
-	end
-
 	for _ = 1, 18 do
-		local x = -860 + rng:NextNumber(-90, 90)
-		local z = -180 + rng:NextNumber(-70, 70)
+		local x = -1700 + rng:NextNumber(-110, 110)
+		local z = -400 + rng:NextNumber(-90, 90)
 		local pos = groundAt(x, z)
 		if pos then
 			terrain:FillBall(pos + Vector3.new(0, rng:NextNumber(0, 4), 0), rng:NextNumber(6, 14), Enum.Material.Rock)
 		end
 	end
 
-	for _ = 1, 26 do
-		local x = rng:NextNumber(760, 1180)
-		local z = rng:NextNumber(-1000, 1000)
+	for _ = 1, 30 do
+		local x = rng:NextNumber(1900, 2480)
+		local z = rng:NextNumber(-2200, 2200)
 		local pos = groundAt(x, z)
 		if pos then
 			terrain:FillBall(pos + Vector3.new(0, rng:NextNumber(0, 6), 0), rng:NextNumber(7, 16), Enum.Material.Rock)
-		else
+		elseif x > 2100 then
 			terrain:FillBall(Vector3.new(x, SEA + 2, z), rng:NextNumber(8, 18), Enum.Material.Rock)
 		end
 	end
 
-	-- The fall where the ravine drops toward the sea.
-	terrain:FillBlock(CFrame.new(500, 30, -68), Vector3.new(12, 26, 10), Enum.Material.Water)
-	terrain:FillBall(Vector3.new(545, 18, -60), 16, Enum.Material.Water)
+	terrain:FillBlock(CFrame.new(1688, 28, -86), Vector3.new(14, 28, 12), Enum.Material.Water)
+	terrain:FillBall(Vector3.new(1755, 16, -78), 18, Enum.Material.Water)
 end
 
 function Forest.grow()
-	print("[Forest] Bigger map. Stay in edit mode. This takes a few minutes.")
+	print("[Forest] Wider map, denser forest. Stay in edit mode. This takes several minutes.")
 	local base = workspace:FindFirstChild("Baseplate")
 	if base then
 		base:Destroy()
@@ -540,14 +553,14 @@ function Forest.grow()
 
 	local cam = workspace.CurrentCamera
 	if cam then
-		cam.CFrame = CFrame.lookAt(Vector3.new(-980, 130, -30), Vector3.new(-180, 36, 80))
+		cam.CFrame = CFrame.lookAt(Vector3.new(-1900, 145, -220), Vector3.new(-400, 36, 80))
 	end
 
 	print("[Forest] Done. File > Save, then Play.")
 	print("[Forest] Ashmere meadow is the spawn. Highwatch peak is northwest.")
 	print("[Forest] Stillwater lake is north, with an island. The Drown marsh is south.")
 	print("[Forest] The Cut is the ravine. It falls toward the east cliffs.")
-	print("[Forest] Greycove is the beach. Salt Isle is offshore. Trees: " .. tostring(trees))
+	print("[Forest] A river cuts the southwest corner. Greycove is the beach. Trees: " .. tostring(trees))
 	return true
 end
 

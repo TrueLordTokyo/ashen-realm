@@ -1,7 +1,8 @@
--- Bigger map: meadow, peak, lake, marsh, ravine, cove, island.
+-- Wider forest. Denser trees, roots sunk in, no rock ring.
+-- A river runs through the southwest corner.
 -- Not during Play. View → Command Bar, then:
 --
 -- require(game.ReplicatedStorage.Forest).grow()
 --
--- Wait until Output says Done. This pass takes a few minutes.
+-- Wait until Output says Done. This pass takes several minutes.
 -- File, Save. Then Play.
