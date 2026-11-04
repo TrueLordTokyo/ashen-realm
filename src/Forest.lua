@@ -1,0 +1,463 @@
+-- Smooth terrain only. No blocky ground.
+-- Run this in edit mode so Studio keeps it:
+--   require(game.ReplicatedStorage.Forest).grow()
+
+local Lighting = game:GetService("Lighting")
+local InsertService = game:GetService("InsertService")
+local AssetService = game:GetService("AssetService")
+
+local Forest = {}
+
+local SEED = 90411
+local VOXEL = 4
+local MIN_X, MAX_X = -512, 512
+local MIN_Z, MAX_Z = -512, 512
+local MIN_Y, MAX_Y = 0, 128
+local CHUNK = 128
+local SEA = 20
+
+-- Free Creator Store models. Loaded if Roblox allows it. Never used as the ground.
+local SCENERY_IDS = {
+	6432306802, -- Forest Pack (trees, bushes, rocks, stumps)
+}
+
+local PATH = {
+	Vector3.new(-280, 0, -20),
+	Vector3.new(-160, 0, 30),
+	Vector3.new(-40, 0, 10),
+	Vector3.new(80, 0, -30),
+	Vector3.new(180, 0, 20),
+	Vector3.new(280, 0, 0),
+}
+
+local function smoothstep(a, b, x)
+	local t = math.clamp((x - a) / (b - a), 0, 1)
+	return t * t * (3 - 2 * t)
+end
+
+local function fade(t)
+	return t * t * t * (t * (t * 6 - 15) + 10)
+end
+
+local function hash2(ix, iz)
+	local n = math.sin(ix * 127.1 + iz * 311.7 + SEED * 0.01) * 43758.5453
+	return n - math.floor(n)
+end
+
+local function noise(x, z)
+	local x0 = math.floor(x)
+	local z0 = math.floor(z)
+	local tx = fade(x - x0)
+	local tz = fade(z - z0)
+	local v00 = hash2(x0, z0)
+	local v10 = hash2(x0 + 1, z0)
+	local v01 = hash2(x0, z0 + 1)
+	local v11 = hash2(x0 + 1, z0 + 1)
+	return v00 + (v10 - v00) * tx + (v01 + (v11 - v01) * tx - (v00 + (v10 - v00) * tx)) * tz
+end
+
+local function distToPath(x, z)
+	local best = 1e9
+	for i = 1, #PATH - 1 do
+		local a, b = PATH[i], PATH[i + 1]
+		local abx, abz = b.X - a.X, b.Z - a.Z
+		local apx, apz = x - a.X, z - a.Z
+		local ab2 = abx * abx + abz * abz
+		local t = ab2 > 0 and math.clamp((apx * abx + apz * abz) / ab2, 0, 1) or 0
+		local dx = x - (a.X + abx * t)
+		local dz = z - (a.Z + abz * t)
+		best = math.min(best, math.sqrt(dx * dx + dz * dz))
+	end
+	return best
+end
+
+local function meadow(x, z)
+	local dx = (x + 30) / 70
+	local dz = (z - 10) / 55
+	return math.clamp(1 - (dx * dx + dz * dz), 0, 1)
+end
+
+local function column(x, z)
+	local n = noise(x * 0.0038, z * 0.0038) * 0.62 + noise(x * 0.009 + 4, z * 0.009) * 0.38
+	local h = 28 + n * 26
+	h += math.exp(-((x + 300) ^ 2) / 22000) * math.exp(-(z * z) / 40000) * 22
+
+	local drop = smoothstep(180, 340, x)
+	h = h * (1 - drop) + (SEA - 8) * drop
+
+	local streamZ = math.sin(x * 0.013) * 55 + 36
+	local streamD = math.abs(z - streamZ)
+	local carve = 0
+	if streamD < 18 and x < 300 then
+		local u = 1 - streamD / 18
+		carve = u * u * 10
+		h -= carve
+	end
+
+	local pdx, pdz = x + 24, z - 70
+	local pd = math.sqrt(pdx * pdx + pdz * pdz)
+	local pool = 0
+	if pd < 34 then
+		pool = (1 - pd / 34) ^ 2 * 12
+		h -= pool
+	end
+
+	local pathD = distToPath(x, z)
+	if pathD < 9 and x < 260 then
+		h -= (1 - pathD / 9) * 1.2
+	end
+
+	h = math.clamp(h, 4, 100)
+
+	local water = nil
+	if carve > 6.5 then
+		water = h + 2.4
+	end
+	if pool > 7 then
+		water = math.max(water or 0, h + 3.2)
+	end
+	if x > 240 then
+		water = math.max(water or 0, SEA)
+	end
+
+	local slope = math.abs(columnRough(x + 12, z) - h) + math.abs(columnRough(x, z + 12) - h)
+	local open = meadow(x, z)
+	local mat = Enum.Material.Grass
+	if x > 220 and h < SEA + 5 then
+		mat = Enum.Material.Sand
+	elseif slope > 10 or (drop > 0.35 and drop < 0.9 and slope > 5) then
+		mat = Enum.Material.Rock
+	elseif pathD < 5.5 and x < 260 then
+		mat = Enum.Material.Mud
+	elseif carve > 2.5 or pool > 2 then
+		mat = Enum.Material.Mud
+	elseif open < 0.25 and n > 0.46 then
+		mat = Enum.Material.LeafyGrass
+	end
+
+	local trees = 0.8 - open * 1.1 - smoothstep(160, 320, x) * 0.85
+	if carve > 5 or pool > 5 or pathD < 7 then
+		trees -= 0.55
+	end
+	trees = math.clamp(trees, 0, 1)
+	return h, water, mat, trees, open
+end
+
+function columnRough(x, z)
+	local n = noise(x * 0.0038, z * 0.0038)
+	local h = 28 + n * 26
+	local drop = smoothstep(180, 340, x)
+	return h * (1 - drop) + (SEA - 8) * drop
+end
+
+local function applyLook()
+	Lighting.ClockTime = 16.7
+	Lighting.GeographicLatitude = 38
+	Lighting.Brightness = 2.15
+	Lighting.Ambient = Color3.fromRGB(78, 88, 80)
+	Lighting.OutdoorAmbient = Color3.fromRGB(168, 176, 168)
+	Lighting.EnvironmentDiffuseScale = 1
+	Lighting.EnvironmentSpecularScale = 0.65
+	Lighting.GlobalShadows = true
+	Lighting.FogColor = Color3.fromRGB(186, 196, 188)
+	Lighting.FogStart = 80
+	Lighting.FogEnd = 900
+	pcall(function()
+		Lighting.Technology = Enum.Technology.Future
+	end)
+	pcall(function()
+		if Lighting.Technology ~= Enum.Technology.Future then
+			Lighting.Technology = Enum.Technology.ShadowMap
+		end
+	end)
+
+	local function fx(className, name)
+		local inst = Lighting:FindFirstChild(name)
+		if not inst then
+			inst = Instance.new(className)
+			inst.Name = name
+			inst.Parent = Lighting
+		end
+		return inst
+	end
+
+	local atmo = fx("Atmosphere", "ForestAir")
+	atmo.Density = 0.32
+	atmo.Offset = 0.2
+	atmo.Color = Color3.fromRGB(198, 206, 198)
+	atmo.Decay = Color3.fromRGB(110, 122, 108)
+	atmo.Glare = 0.18
+	atmo.Haze = 1.4
+
+	local grade = fx("ColorCorrectionEffect", "ForestGrade")
+	grade.Saturation = -0.06
+	grade.Contrast = 0.08
+	grade.Brightness = 0.02
+	grade.TintColor = Color3.fromRGB(214, 222, 208)
+
+	local bloom = fx("BloomEffect", "ForestBloom")
+	bloom.Intensity = 0.35
+	bloom.Size = 20
+	bloom.Threshold = 1.05
+
+	local rays = fx("SunRaysEffect", "ForestRays")
+	rays.Intensity = 0.08
+	rays.Spread = 0.85
+
+	local terrain = workspace.Terrain
+	terrain.WaterColor = Color3.fromRGB(52, 92, 84)
+	terrain.WaterReflectance = 0.45
+	terrain.WaterTransparency = 0.15
+	terrain.WaterWaveSize = 0.08
+	terrain.WaterWaveSpeed = 5
+	pcall(function()
+		terrain.Decoration = true
+		terrain.GrassLength = 0.85
+	end)
+	workspace.GlobalWind = Vector3.new(10, 0, 4)
+
+	local colors = {
+		Grass = Color3.fromRGB(62, 112, 52),
+		LeafyGrass = Color3.fromRGB(42, 86, 40),
+		Mud = Color3.fromRGB(78, 62, 44),
+		Ground = Color3.fromRGB(92, 74, 48),
+		Rock = Color3.fromRGB(96, 100, 94),
+		Slate = Color3.fromRGB(82, 88, 84),
+		Sand = Color3.fromRGB(128, 122, 100),
+		Water = Color3.fromRGB(52, 92, 84),
+	}
+	for name, color in pairs(colors) do
+		pcall(function()
+			terrain:SetMaterialColor(Enum.Material[name], color)
+		end)
+	end
+
+	local clouds = terrain:FindFirstChild("ForestClouds")
+	if not clouds then
+		clouds = Instance.new("Clouds")
+		clouds.Name = "ForestClouds"
+		clouds.Parent = terrain
+	end
+	clouds.Cover = 0.72
+	clouds.Density = 0.55
+	clouds.Color = Color3.fromRGB(230, 232, 228)
+end
+
+local function writeLand()
+	local terrain = workspace.Terrain
+	terrain:Clear()
+	applyLook()
+
+	local steps = (MAX_X - MIN_X) / CHUNK
+	local n = 0
+	for x0 = MIN_X, MAX_X - CHUNK, CHUNK do
+		for z0 = MIN_Z, MAX_Z - CHUNK, CHUNK do
+			local region = Region3.new(
+				Vector3.new(x0, MIN_Y, z0),
+				Vector3.new(x0 + CHUNK, MAX_Y, z0 + CHUNK)
+			):ExpandToGrid(VOXEL)
+			local size = region.Size / VOXEL
+			local origin = region.CFrame.Position - region.Size / 2
+			local materials, occupancy = {}, {}
+			for ix = 1, size.X do
+				materials[ix] = {}
+				occupancy[ix] = {}
+				for iy = 1, size.Y do
+					materials[ix][iy] = {}
+					occupancy[ix][iy] = table.create(size.Z, 0)
+					for iz = 1, size.Z do
+						materials[ix][iy][iz] = Enum.Material.Air
+					end
+				end
+			end
+
+			for ix = 1, size.X do
+				for iz = 1, size.Z do
+					local wx = origin.X + (ix - 0.5) * VOXEL
+					local wz = origin.Z + (iz - 0.5) * VOXEL
+					local h, water, topMat = column(wx, wz)
+					for iy = 1, size.Y do
+						local wy = origin.Y + (iy - 1) * VOXEL
+						if wy + VOXEL <= h - VOXEL then
+							materials[ix][iy][iz] = (wy < h - 16) and Enum.Material.Rock or Enum.Material.Ground
+							occupancy[ix][iy][iz] = 1
+						elseif wy < h then
+							materials[ix][iy][iz] = topMat
+							occupancy[ix][iy][iz] = math.clamp((h - wy) / VOXEL, 0.2, 1)
+						elseif water and wy < water then
+							materials[ix][iy][iz] = Enum.Material.Water
+							occupancy[ix][iy][iz] = 1
+						end
+					end
+				end
+			end
+
+			terrain:WriteVoxels(region, VOXEL, materials, occupancy)
+			n += 1
+			if z0 == MIN_Z then
+				print(string.format("[Forest] Land %d / %d", (x0 - MIN_X) / CHUNK + 1, steps))
+			end
+			task.wait()
+		end
+	end
+end
+
+local function groundAt(x, z)
+	local hit = workspace:Raycast(Vector3.new(x, 500, z), Vector3.new(0, -900, 0))
+	if not hit or hit.Instance ~= workspace.Terrain then
+		return nil
+	end
+	if hit.Material == Enum.Material.Water or hit.Normal.Y < 0.78 then
+		return nil
+	end
+	return hit.Position, hit.Material
+end
+
+local function collectTemplates(root, into)
+	for _, child in ipairs(root:GetChildren()) do
+		if child:IsA("Model") then
+			local meshes = 0
+			for _, d in ipairs(child:GetDescendants()) do
+				if d:IsA("MeshPart") or d:IsA("SpecialMesh") then
+					meshes += 1
+				end
+			end
+			if meshes > 0 then
+				table.insert(into, child)
+			else
+				collectTemplates(child, into)
+			end
+		elseif child:IsA("Folder") then
+			collectTemplates(child, into)
+		end
+	end
+end
+
+local function loadScenery()
+	local templates = {}
+	for _, id in ipairs(SCENERY_IDS) do
+		local loaded
+		local ok, result = pcall(function()
+			return InsertService:LoadAsset(id)
+		end)
+		if ok then
+			loaded = result
+		else
+			ok, result = pcall(function()
+				return AssetService:LoadAssetAsync(id)
+			end)
+			if ok then
+				loaded = result
+			else
+				warn("[Forest] Could not load scenery " .. id .. ": " .. tostring(result))
+			end
+		end
+		if loaded then
+			collectTemplates(loaded, templates)
+			loaded.Parent = game:GetService("ServerStorage")
+			print("[Forest] Loaded scenery asset " .. id .. " (" .. #templates .. " models)")
+		end
+	end
+	return templates
+end
+
+local function scatter(templates, rng)
+	if #templates == 0 then
+		warn("[Forest] No tree meshes loaded. The grass is real terrain. Insert a tree pack from Toolbox, put the models in ServerStorage, and run grow() again.")
+		return 0
+	end
+	local folder = workspace:FindFirstChild("ForestScenery")
+	if folder then
+		folder:Destroy()
+	end
+	folder = Instance.new("Folder")
+	folder.Name = "ForestScenery"
+	folder.Parent = workspace
+
+	local placed = 0
+	local tries = 0
+	while placed < 140 and tries < 900 do
+		tries += 1
+		local x = rng:NextNumber(-420, 220)
+		local z = rng:NextNumber(-420, 420)
+		local _, _, _, trees = column(x, z)
+		if trees > 0.35 and rng:NextNumber() < trees then
+			local pos = groundAt(x, z)
+			if pos and pos.Y > SEA + 2 then
+				local template = templates[rng:NextInteger(1, #templates)]
+				local clone = template:Clone()
+				clone.Parent = folder
+				pcall(function()
+					clone:ScaleTo(rng:NextNumber(0.75, 1.45))
+				end)
+				clone:PivotTo(CFrame.new(pos) * CFrame.Angles(0, rng:NextNumber(0, math.pi * 2), 0))
+				local boundsCF, boundsSize = clone:GetBoundingBox()
+				local bottom = boundsCF.Position.Y - boundsSize.Y / 2
+				clone:PivotTo(clone:GetPivot() + Vector3.new(0, pos.Y - bottom, 0))
+				placed += 1
+				if placed % 15 == 0 then
+					task.wait()
+				end
+			end
+		end
+	end
+	return placed
+end
+
+local function addSpawn()
+	local old = workspace:FindFirstChild("ForestSpawn")
+	if old then
+		old:Destroy()
+	end
+	local pos = groundAt(-40, 12) or Vector3.new(-40, 40, 12)
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "ForestSpawn"
+	spawn.Anchored = true
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.Size = Vector3.new(8, 1, 8)
+	spawn.Transparency = 1
+	spawn.CanCollide = false
+	spawn.CFrame = CFrame.new(pos + Vector3.new(0, 4, 0))
+	spawn.Parent = workspace
+end
+
+function Forest.grow()
+	print("[Forest] Building smooth terrain. Stay in edit mode. This takes a minute.")
+	local base = workspace:FindFirstChild("Baseplate")
+	if base then
+		base:Destroy()
+	end
+	local oldParts = workspace:FindFirstChild("Drenchwood")
+	if oldParts then
+		oldParts:Destroy()
+	end
+
+	writeLand()
+
+	-- A few rock outcrops. These are terrain, not parts.
+	local rng = Random.new(SEED)
+	local terrain = workspace.Terrain
+	for _ = 1, 28 do
+		local x = rng:NextNumber(-200, 280)
+		local z = rng:NextNumber(-400, 400)
+		local pos = groundAt(x, z)
+		if pos then
+			terrain:FillBall(pos + Vector3.new(0, rng:NextNumber(-1, 2), 0), rng:NextNumber(5, 13), Enum.Material.Rock)
+		end
+	end
+
+	local templates = loadScenery()
+	local trees = scatter(templates, rng)
+	addSpawn()
+
+	local cam = workspace.CurrentCamera
+	if cam then
+		cam.CFrame = CFrame.lookAt(Vector3.new(-210, 78, 150), Vector3.new(-20, 28, 10))
+	end
+
+	print("[Forest] Done. Smooth grass, water, and rock are in the terrain. Trees placed: " .. tostring(trees) .. ". File > Save.")
+	return true
+end
+
+return Forest
