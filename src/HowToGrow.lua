@@ -1,13 +1,7 @@
--- The ground is Roblox terrain. It is not in the file yet, because terrain
--- made during Play is thrown away when you hit Stop.
---
--- While you are NOT playing:
---   1. View menu, then Command Bar.
---   2. Paste this and press Enter:
+-- Bigger map: meadow, peak, lake, marsh, ravine, cove, island.
+-- Not during Play. View → Command Bar, then:
 --
 -- require(game.ReplicatedStorage.Forest).grow()
 --
--- 3. Wait until Output says Done.
--- 4. File, Save.
---
--- Press Play after that to walk it. Grass, water, and rock are real terrain.
+-- Wait until Output says Done. This pass takes a few minutes.
+-- File, Save. Then Play.

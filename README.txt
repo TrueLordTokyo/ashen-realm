@@ -1,16 +1,18 @@
 SMOOTH FOREST
 
-The ground is real Roblox terrain (grass, mud, rock, water). It is not made of parts.
-Studio only keeps terrain if you generate it while you are NOT pressing Play.
+Real Roblox terrain. About four times the old map.
+Ashmere meadow, Highwatch peak, Stillwater lake and its island,
+the Drown marsh, the Cut ravine and its fall, Greycove beach, Salt Isle.
 
-  1. Download Drenchwood.rbxlx again and open it.
-  2. Top menu: View → Command Bar.
-  3. Paste this into the bar at the bottom and press Enter:
+Generate it again. The old land gets replaced.
+
+  1. Open Drenchwood.rbxlx.
+  2. Do not press Play.
+  3. View → Command Bar.
+  4. Paste and press Enter:
 
      require(game.ReplicatedStorage.Forest).grow()
 
-  4. Wait. Output will count the land, then say Done. The hills appear as it goes.
-  5. File → Save.
-  6. Press Play to walk. You spawn in the meadow. The sea is east.
-
-Do not press Play to grow it. Play throws the terrain away when you hit Stop.
+  5. It takes a few minutes. Wait for Done.
+  6. File → Save.
+  7. Press Play. You start in Ashmere. The peak is northwest. The sea is east.
