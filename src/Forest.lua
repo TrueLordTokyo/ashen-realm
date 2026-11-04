@@ -8,6 +8,9 @@ local AssetService = game:GetService("AssetService")
 
 local Forest = {}
 
+local SHIFT = Vector3.zero
+local MERGE = false
+
 local SEED = 90411
 local VOXEL = 4
 local MIN_X, MAX_X = -2560, 2560
@@ -312,16 +315,18 @@ end
 
 local function writeLand()
 	local terrain = workspace.Terrain
-	terrain:Clear()
-	applyLook()
+	if not MERGE then
+		terrain:Clear()
+		applyLook()
+	end
 
 	local steps = (MAX_X - MIN_X) / CHUNK
 	local n = 0
 	for x0 = MIN_X, MAX_X - CHUNK, CHUNK do
 		for z0 = MIN_Z, MAX_Z - CHUNK, CHUNK do
 			local region = Region3.new(
-				Vector3.new(x0, MIN_Y, z0),
-				Vector3.new(x0 + CHUNK, MAX_Y, z0 + CHUNK)
+				Vector3.new(x0 + SHIFT.X, MIN_Y, z0 + SHIFT.Z),
+				Vector3.new(x0 + CHUNK + SHIFT.X, MAX_Y, z0 + CHUNK + SHIFT.Z)
 			):ExpandToGrid(VOXEL)
 			local size = region.Size / VOXEL
 			local origin = region.CFrame.Position - region.Size / 2
@@ -340,8 +345,8 @@ local function writeLand()
 
 			for ix = 1, size.X do
 				for iz = 1, size.Z do
-					local wx = origin.X + (ix - 0.5) * VOXEL
-					local wz = origin.Z + (iz - 0.5) * VOXEL
+					local wx = origin.X + (ix - 0.5) * VOXEL - SHIFT.X
+					local wz = origin.Z + (iz - 0.5) * VOXEL - SHIFT.Z
 					local h, water, topMat = column(wx, wz)
 					for iy = 1, size.Y do
 						local wy = origin.Y + (iy - 1) * VOXEL
@@ -519,7 +524,7 @@ local function scatter(templates, rng)
 				end
 			end
 			if not blocked then
-				local pos = groundAt(x, z, 0.84)
+				local pos = groundAt(x + SHIFT.X, z + SHIFT.Z, 0.84)
 				if pos and pos.Y > SEA + 2 then
 					local template = templates[rng:NextInteger(1, #templates)]
 					local clone = template:Clone()
@@ -567,7 +572,7 @@ local function addSpawn()
 	if old then
 		old:Destroy()
 	end
-	local pos = groundAt(-400, 80) or Vector3.new(-400, 40, 80)
+	local pos = groundAt(-400 + SHIFT.X, 80 + SHIFT.Z) or Vector3.new(-400 + SHIFT.X, 40, 80 + SHIFT.Z)
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "ForestSpawn"
 	spawn.Anchored = true
@@ -582,8 +587,8 @@ end
 
 local function landmarks(terrain, rng)
 	for _ = 1, 18 do
-		local x = -1700 + rng:NextNumber(-110, 110)
-		local z = -400 + rng:NextNumber(-90, 90)
+		local x = -1700 + SHIFT.X + rng:NextNumber(-110, 110)
+		local z = -400 + SHIFT.Z + rng:NextNumber(-90, 90)
 		local pos = groundAt(x, z)
 		if pos then
 			terrain:FillBall(pos + Vector3.new(0, rng:NextNumber(0, 4), 0), rng:NextNumber(6, 14), Enum.Material.Rock)
@@ -591,29 +596,37 @@ local function landmarks(terrain, rng)
 	end
 
 	for _ = 1, 30 do
-		local x = rng:NextNumber(1900, 2480)
-		local z = rng:NextNumber(-2200, 2200)
+		local x = SHIFT.X + rng:NextNumber(1900, 2480)
+		local z = SHIFT.Z + rng:NextNumber(-2200, 2200)
 		local pos = groundAt(x, z)
 		if pos then
 			terrain:FillBall(pos + Vector3.new(0, rng:NextNumber(0, 6), 0), rng:NextNumber(7, 16), Enum.Material.Rock)
-		elseif x > 2100 then
+		elseif x > SHIFT.X + 2100 then
 			terrain:FillBall(Vector3.new(x, SEA + 2, z), rng:NextNumber(8, 18), Enum.Material.Rock)
 		end
 	end
 
-	terrain:FillBlock(CFrame.new(1688, 28, -86), Vector3.new(14, 28, 12), Enum.Material.Water)
-	terrain:FillBall(Vector3.new(1755, 16, -78), 18, Enum.Material.Water)
+	terrain:FillBlock(CFrame.new(1688 + SHIFT.X, 28, -86 + SHIFT.Z), Vector3.new(14, 28, 12), Enum.Material.Water)
+	terrain:FillBall(Vector3.new(1755 + SHIFT.X, 16, -78 + SHIFT.Z), 18, Enum.Material.Water)
 end
 
-function Forest.grow()
-	print("[Forest] Wider map, denser forest. Stay in edit mode. This takes several minutes.")
-	local base = workspace:FindFirstChild("Baseplate")
-	if base then
-		base:Destroy()
+function Forest.grow(shiftX, shiftZ)
+	SHIFT = Vector3.new(tonumber(shiftX) or 0, 0, tonumber(shiftZ) or 0)
+	MERGE = SHIFT.X ~= 0 or SHIFT.Z ~= 0
+	if MERGE then
+		print("[Forest] Adding the woods beside your map. Nothing already in the place is cleared.")
+	else
+		print("[Forest] Wider map, denser forest. Stay in edit mode. This takes several minutes.")
 	end
-	local oldParts = workspace:FindFirstChild("Drenchwood")
-	if oldParts then
-		oldParts:Destroy()
+	if not MERGE then
+		local base = workspace:FindFirstChild("Baseplate")
+		if base then
+			base:Destroy()
+		end
+		local oldParts = workspace:FindFirstChild("Drenchwood")
+		if oldParts then
+			oldParts:Destroy()
+		end
 	end
 
 	writeLand()
@@ -628,7 +641,10 @@ function Forest.grow()
 
 	local cam = workspace.CurrentCamera
 	if cam then
-		cam.CFrame = CFrame.lookAt(Vector3.new(-1900, 145, -220), Vector3.new(-400, 36, 80))
+		cam.CFrame = CFrame.lookAt(
+			Vector3.new(-1900 + SHIFT.X, 145, -220 + SHIFT.Z),
+			Vector3.new(-400 + SHIFT.X, 36, 80 + SHIFT.Z)
+		)
 	end
 
 	print("[Forest] Done. File > Save, then Play.")
