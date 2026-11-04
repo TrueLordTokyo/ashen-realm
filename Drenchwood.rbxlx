@@ -1,0 +1,932 @@
+<roblox xmlns:xmime="http://www.w3.org/2005/05/xmlmime" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.roblox.com/roblox.xsd" version="4">
+<Meta name="ExplicitAutoJoints">true</Meta>
+<External>null</External>
+<External>nil</External>
+<Item class="Workspace" referent="RBX0000000000000000000000000000000A">
+<Properties>
+<string name="Name">Workspace</string><float name="Gravity">196.2</float><bool name="StreamingEnabled">false</bool></Properties>
+</Item>
+<Item class="Lighting" referent="RBX00000000000000000000000000000009">
+<Properties>
+<string name="Name">Lighting</string><float name="ClockTime">15.6</float><float name="Brightness">1.15</float><Color3 name="Ambient"><R>0.36</R><G>0.41</G><B>0.38</B></Color3><Color3 name="OutdoorAmbient"><R>0.54</R><G>0.59</G><B>0.56</B></Color3><Color3 name="FogColor"><R>0.66</R><G>0.7</G><B>0.67</B></Color3><float name="FogStart">28</float><float name="FogEnd">520</float><bool name="GlobalShadows">true</bool></Properties>
+<Item class="Atmosphere" referent="RBX00000000000000000000000000000008">
+<Properties>
+<string name="Name">DrenchAir</string><float name="Density">0.48</float><float name="Haze">2.6</float><float name="Glare">0.04</float><Color3 name="Color"><R>0.69</R><G>0.74</G><B>0.71</B></Color3></Properties>
+</Item>
+</Item>
+<Item class="ReplicatedStorage" referent="RBX00000000000000000000000000000004">
+<Properties>
+<string name="Name">ReplicatedStorage</string></Properties>
+<Item class="ModuleScript" referent="RBX00000000000000000000000000000001">
+<Properties>
+<string name="Name">MapBuilder</string><ProtectedString name="Source"><![CDATA[-- Drenchwood
+-- A rain-soaked coastal forest. Terrain, not a baseplate.
+-- No people. The map is the whole game for now.
+
+local Lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
+
+local MapBuilder = {}
+
+local VOXEL = 4
+local MIN_X, MAX_X = -512, 512
+local MIN_Z, MAX_Z = -512, 512
+local MIN_Y, MAX_Y = 0, 128
+local CHUNK = 128
+local SEA = 18
+local SEED = 90411
+
+local PATH = {
+	Vector3.new(-430, 0, -30),
+	Vector3.new(-300, 0, 0),
+	Vector3.new(-170, 0, 55),
+	Vector3.new(-40, 0, 18),
+	Vector3.new(90, 0, -24),
+	Vector3.new(210, 0, 36),
+	Vector3.new(340, 0, 8),
+	Vector3.new(430, 0, -10),
+}
+
+local function smoothstep(a, b, x)
+	local t = math.clamp((x - a) / (b - a), 0, 1)
+	return t * t * (3 - 2 * t)
+end
+
+local function fade(t)
+	return t * t * t * (t * (t * 6 - 15) + 10)
+end
+
+local function hash2(ix, iz)
+	local n = math.sin(ix * 127.1 + iz * 311.7 + SEED * 0.01) * 43758.5453
+	return n - math.floor(n)
+end
+
+local function valueNoise(x, z)
+	local x0 = math.floor(x)
+	local z0 = math.floor(z)
+	local tx = fade(x - x0)
+	local tz = fade(z - z0)
+	local v00 = hash2(x0, z0)
+	local v10 = hash2(x0 + 1, z0)
+	local v01 = hash2(x0, z0 + 1)
+	local v11 = hash2(x0 + 1, z0 + 1)
+	local a = v00 + (v10 - v00) * tx
+	local b = v01 + (v11 - v01) * tx
+	return a + (b - a) * tz
+end
+
+local function distToPath(x, z)
+	local best = 1e9
+	for i = 1, #PATH - 1 do
+		local a = PATH[i]
+		local b = PATH[i + 1]
+		local abx, abz = b.X - a.X, b.Z - a.Z
+		local apx, apz = x - a.X, z - a.Z
+		local ab2 = abx * abx + abz * abz
+		local t = 0
+		if ab2 > 0 then
+			t = math.clamp((apx * abx + apz * abz) / ab2, 0, 1)
+		end
+		local dx = x - (a.X + abx * t)
+		local dz = z - (a.Z + abz * t)
+		local d = math.sqrt(dx * dx + dz * dz)
+		if d < best then
+			best = d
+		end
+	end
+	return best
+end
+
+local function meadowMask(x, z)
+	local dx = (x + 50) / 78
+	local dz = (z - 24) / 64
+	return math.clamp(1 - (dx * dx + dz * dz), 0, 1)
+end
+
+local function heightOnly(x, z)
+	local n = valueNoise(x * 0.0042, z * 0.0042) * 0.62 + valueNoise(x * 0.009 + 3, z * 0.009 - 2) * 0.38
+	local h = 30 + n * 40
+	local ridge = math.exp(-((x + 400) ^ 2) / 20000) * math.exp(-(z * z) / 50000)
+	h += ridge * 24
+	local drop = smoothstep(250, 390, x)
+	h = h * (1 - drop) + (8 + (1 - drop) * 6) * drop
+	return h, drop, n
+end
+
+local function sampleColumn(x, z)
+	local h, drop, n = heightOnly(x, z)
+
+	local streamZ = math.sin(x * 0.012) * 70 + 30
+	local streamDist = math.abs(z - streamZ)
+	local streamWidth = 16 + smoothstep(-200, 300, x) * 12
+	local carve = 0
+	if streamDist < streamWidth then
+		local u = 1 - streamDist / streamWidth
+		carve = u * u * 11
+	end
+	h -= carve
+
+	local pdx, pdz = x + 16, z - 78
+	local pd = math.sqrt(pdx * pdx + pdz * pdz)
+	local pool = 0
+	if pd < 26 then
+		pool = (1 - pd / 26) ^ 2 * 14
+	end
+	h -= pool
+
+	local pathD = distToPath(x, z)
+	if pathD < 8 and x < 360 then
+		h -= (1 - pathD / 8) * 1.3
+	end
+
+	h = math.clamp(h, 2, 110)
+
+	local waterTop = nil
+	if carve > 7 then
+		waterTop = h + 2.2
+	end
+	if pool > 8 then
+		waterTop = math.max(waterTop or 0, h + 3)
+	end
+	if x > 300 then
+		waterTop = math.max(waterTop or 0, SEA)
+	end
+
+	local hE = heightOnly(x + 10, z)
+	local hS = heightOnly(x, z + 10)
+	local slope = math.abs(hE - h) + math.abs(hS - h)
+
+	local meadow = meadowMask(x, z)
+	local material = Enum.Material.Grass
+	if x > 280 and h < SEA + 7 then
+		material = Enum.Material.Sand
+	elseif slope > 14 or (drop > 0.45 and drop < 0.88 and slope > 6) then
+		material = Enum.Material.Rock
+	elseif pathD < 5 and x < 360 then
+		material = Enum.Material.Mud
+	elseif carve > 3 or pool > 2 then
+		material = Enum.Material.Mud
+	elseif meadow < 0.2 and n > 0.48 then
+		material = Enum.Material.LeafyGrass
+	end
+
+	local forest = 0.82 - meadow * 1.05 - smoothstep(230, 370, x) * 0.9
+	if carve > 6 then
+		forest -= 0.35
+	end
+	local pale = 0
+	if z < -70 and x < 200 then
+		pale = n
+		forest = math.max(forest, 0.5)
+	end
+	forest = math.clamp(forest, 0, 1)
+
+	return h, waterTop, material, forest, pale, meadow, pathD
+end
+
+local function applyLighting()
+	Lighting.ClockTime = 15.6
+	Lighting.Brightness = 1.15
+	Lighting.Ambient = Color3.fromRGB(92, 104, 98)
+	Lighting.OutdoorAmbient = Color3.fromRGB(138, 150, 144)
+	Lighting.ColorShift_Top = Color3.fromRGB(186, 196, 190)
+	Lighting.ColorShift_Bottom = Color3.fromRGB(48, 56, 46)
+	Lighting.EnvironmentDiffuseScale = 0.85
+	Lighting.EnvironmentSpecularScale = 0.55
+	Lighting.GlobalShadows = true
+	Lighting.FogColor = Color3.fromRGB(168, 178, 172)
+	Lighting.FogStart = 28
+	Lighting.FogEnd = 520
+	pcall(function()
+		Lighting.Technology = Enum.Technology.Future
+	end)
+
+	local function effect(className, name)
+		local existing = Lighting:FindFirstChild(name)
+		if existing then
+			return existing
+		end
+		local inst = Instance.new(className)
+		inst.Name = name
+		inst.Parent = Lighting
+		return inst
+	end
+
+	local atmo = effect("Atmosphere", "DrenchAir")
+	atmo.Density = 0.48
+	atmo.Offset = 0.12
+	atmo.Color = Color3.fromRGB(176, 188, 180)
+	atmo.Decay = Color3.fromRGB(86, 98, 90)
+	atmo.Glare = 0.04
+	atmo.Haze = 2.6
+
+	local grade = effect("ColorCorrectionEffect", "DrenchGrade")
+	grade.Saturation = -0.18
+	grade.Contrast = 0.06
+	grade.Brightness = -0.02
+	grade.TintColor = Color3.fromRGB(206, 220, 210)
+
+	local bloom = effect("BloomEffect", "DrenchBloom")
+	bloom.Intensity = 0.25
+	bloom.Size = 18
+	bloom.Threshold = 1.1
+
+	local rays = effect("SunRaysEffect", "DrenchRays")
+	rays.Intensity = 0.04
+	rays.Spread = 0.6
+
+	local terrain = workspace.Terrain
+	terrain.WaterColor = Color3.fromRGB(58, 92, 86)
+	terrain.WaterReflectance = 0.35
+	terrain.WaterTransparency = 0.25
+	terrain.WaterWaveSize = 0.12
+	terrain.WaterWaveSpeed = 6
+	pcall(function()
+		terrain.Decoration = true
+	end)
+	local colors = {
+		Grass = Color3.fromRGB(52, 86, 46),
+		LeafyGrass = Color3.fromRGB(36, 68, 38),
+		Mud = Color3.fromRGB(68, 54, 38),
+		Ground = Color3.fromRGB(54, 44, 32),
+		Rock = Color3.fromRGB(86, 90, 86),
+		Slate = Color3.fromRGB(74, 80, 78),
+		Sand = Color3.fromRGB(112, 108, 90),
+		Water = Color3.fromRGB(58, 92, 86),
+	}
+	for name, color in pairs(colors) do
+		pcall(function()
+			terrain:SetMaterialColor(Enum.Material[name], color)
+		end)
+	end
+
+	local clouds = terrain:FindFirstChild("DrenchClouds")
+	if not clouds then
+		clouds = Instance.new("Clouds")
+		clouds.Name = "DrenchClouds"
+		clouds.Parent = terrain
+	end
+	clouds.Cover = 0.94
+	clouds.Density = 0.78
+	clouds.Color = Color3.fromRGB(178, 184, 180)
+end
+
+local function writeTerrain()
+	local terrain = workspace.Terrain
+	terrain:Clear()
+	applyLighting()
+
+	for x0 = MIN_X, MAX_X - CHUNK, CHUNK do
+		for z0 = MIN_Z, MAX_Z - CHUNK, CHUNK do
+			local region = Region3.new(
+				Vector3.new(x0, MIN_Y, z0),
+				Vector3.new(x0 + CHUNK, MAX_Y, z0 + CHUNK)
+			):ExpandToGrid(VOXEL)
+			local size = region.Size / VOXEL
+			local origin = region.CFrame.Position - region.Size / 2
+			local materials = {}
+			local occupancy = {}
+			for ix = 1, size.X do
+				materials[ix] = {}
+				occupancy[ix] = {}
+				for iy = 1, size.Y do
+					materials[ix][iy] = {}
+					occupancy[ix][iy] = {}
+				end
+			end
+
+			for ix = 1, size.X do
+				for iz = 1, size.Z do
+					local worldX = origin.X + (ix - 0.5) * VOXEL
+					local worldZ = origin.Z + (iz - 0.5) * VOXEL
+					local h, waterTop, topMat = sampleColumn(worldX, worldZ)
+					for iy = 1, size.Y do
+						local worldY = origin.Y + (iy - 1) * VOXEL
+						local solidTop = h
+						if worldY + VOXEL <= solidTop - VOXEL then
+							materials[ix][iy][iz] = Enum.Material.Ground
+							occupancy[ix][iy][iz] = 1
+						elseif worldY < solidTop then
+							local frac = math.clamp((solidTop - worldY) / VOXEL, 0.18, 1)
+							materials[ix][iy][iz] = topMat
+							occupancy[ix][iy][iz] = frac
+						elseif waterTop and worldY < waterTop then
+							materials[ix][iy][iz] = Enum.Material.Water
+							occupancy[ix][iy][iz] = 1
+						else
+							materials[ix][iy][iz] = Enum.Material.Air
+							occupancy[ix][iy][iz] = 0
+						end
+					end
+				end
+			end
+
+			terrain:WriteVoxels(region, VOXEL, materials, occupancy)
+			if z0 == MIN_Z then
+				local step = (x0 - MIN_X) / CHUNK + 1
+				local total = (MAX_X - MIN_X) / CHUNK
+				print(string.format("[Drenchwood] Ground %d / %d", step, total))
+			end
+			task.wait()
+		end
+	end
+end
+
+local function part(props)
+	local piece = Instance.new("Part")
+	piece.Name = props.Name or "Part"
+	piece.Anchored = true
+	piece.CanCollide = props.CanCollide == true
+	piece.CastShadow = props.CastShadow ~= false
+	piece.Material = props.Material or Enum.Material.SmoothPlastic
+	piece.Color = props.Color or Color3.fromRGB(80, 80, 80)
+	piece.Size = props.Size or Vector3.new(4, 4, 4)
+	piece.CFrame = props.CFrame or CFrame.new(props.Position or Vector3.zero)
+	if props.Shape then
+		piece.Shape = props.Shape
+	end
+	piece.Transparency = props.Transparency or 0
+	piece.TopSurface = Enum.SurfaceType.Smooth
+	piece.BottomSurface = Enum.SurfaceType.Smooth
+	piece.Parent = props.Parent
+	return piece
+end
+
+local function groundAt(x, z)
+	local origin = Vector3.new(x, 400, z)
+	local hit = workspace:Raycast(origin, Vector3.new(0, -800, 0))
+	if not hit or hit.Instance ~= workspace.Terrain then
+		return nil
+	end
+	if hit.Material == Enum.Material.Water then
+		return nil
+	end
+	if hit.Normal.Y < 0.72 then
+		return nil
+	end
+	return hit.Position, hit.Normal
+end
+
+local function makeTree(folder, pos, rng, kind)
+	local model = Instance.new("Model")
+	model.Name = kind
+	model.Parent = folder
+
+	local lean = rng:NextNumber(-0.08, 0.08)
+	local yaw = rng:NextNumber(0, math.pi * 2)
+	local height
+	local radius
+	local bark
+	if kind == "giant" then
+		height = rng:NextNumber(46, 68)
+		radius = rng:NextNumber(2.4, 3.6)
+		bark = Color3.fromRGB(54, 42, 32)
+	elseif kind == "pale" then
+		height = rng:NextNumber(28, 44)
+		radius = rng:NextNumber(0.7, 1.15)
+		bark = Color3.fromRGB(186, 184, 172)
+	elseif kind == "snag" then
+		height = rng:NextNumber(16, 34)
+		radius = rng:NextNumber(0.8, 1.8)
+		bark = Color3.fromRGB(48, 46, 42)
+	else
+		height = rng:NextNumber(22, 40)
+		radius = rng:NextNumber(1.15, 2.1)
+		bark = Color3.fromRGB(62, 48, 36):Lerp(Color3.fromRGB(42, 36, 30), rng:NextNumber())
+	end
+
+	local base = pos + Vector3.new(0, radius * 0.2, 0)
+	local trunk = part({
+		Name = "Trunk",
+		Parent = model,
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(height, radius * 2, radius * 2),
+		Color = bark,
+		Material = Enum.Material.Wood,
+		CanCollide = true,
+		CFrame = CFrame.new(base + Vector3.new(0, height * 0.45, 0))
+			* CFrame.Angles(0, yaw, 0)
+			* CFrame.Angles(0, 0, math.rad(90) + lean),
+	})
+	model.PrimaryPart = trunk
+
+	if kind == "giant" or kind == "oak" then
+		for i = 1, (kind == "giant" and 5 or 3) do
+			local angle = yaw + i * 1.7
+			local reach = radius * (kind == "giant" and 3.2 or 2.4)
+			part({
+				Name = "Root",
+				Parent = model,
+				Size = Vector3.new(radius * 0.7, radius * 0.45, reach),
+				Color = bark:Lerp(Color3.fromRGB(40, 70, 40), 0.25),
+				Material = Enum.Material.Wood,
+				CanCollide = false,
+				CastShadow = false,
+				CFrame = CFrame.new(base, base + Vector3.new(math.cos(angle), -0.2, math.sin(angle)))
+					* CFrame.new(0, 0, -reach * 0.45),
+			})
+		end
+	end
+
+	if kind ~= "snag" then
+		local leaf = Color3.fromRGB(34, 72, 40)
+		if kind == "pale" then
+			leaf = Color3.fromRGB(118, 138, 96)
+		elseif kind == "giant" then
+			leaf = Color3.fromRGB(28, 58, 34)
+		end
+		local layers = kind == "giant" and 3 or (kind == "pale" and 2 or 2)
+		for layer = 1, layers do
+			local y = height * (0.55 + layer * 0.14)
+			local spread = (kind == "pale" and 7 or 11) + layer * 1.5
+			if kind == "giant" then
+				spread = 16 + layer * 3
+			end
+			local blobs = kind == "pale" and 3 or 5
+			for _ = 1, blobs do
+				local s = spread * rng:NextNumber(0.65, 1.05)
+				part({
+					Name = "Canopy",
+					Parent = model,
+					Shape = Enum.PartType.Ball,
+					Size = Vector3.new(s, s * rng:NextNumber(0.55, 0.85), s),
+					Color = leaf:Lerp(Color3.fromRGB(18, 36, 22), rng:NextNumber(0, 0.45)),
+					Material = Enum.Material.LeafyGrass,
+					CanCollide = false,
+					Transparency = 0.02,
+					CFrame = CFrame.new(base + Vector3.new(
+						rng:NextNumber(-spread * 0.28, spread * 0.28),
+						y + rng:NextNumber(-1.5, 2.5),
+						rng:NextNumber(-spread * 0.28, spread * 0.28)
+					)),
+				})
+			end
+		end
+		if kind == "giant" and rng:NextNumber() > 0.35 then
+			for v = 1, 3 do
+				part({
+					Name = "Moss",
+					Parent = model,
+					Size = Vector3.new(0.35, rng:NextNumber(6, 12), 0.35),
+					Color = Color3.fromRGB(70, 110, 62),
+					Material = Enum.Material.Grass,
+					CanCollide = false,
+					CastShadow = false,
+					Transparency = 0.15,
+					CFrame = CFrame.new(base + Vector3.new(rng:NextNumber(-3, 3), height * 0.7, rng:NextNumber(-3, 3))),
+				})
+			end
+		end
+	else
+		part({
+			Name = "Break",
+			Parent = model,
+			Size = Vector3.new(radius * 2.2, radius, radius * 1.4),
+			Color = Color3.fromRGB(70, 66, 58),
+			Material = Enum.Material.Wood,
+			CanCollide = false,
+			CFrame = CFrame.new(base + Vector3.new(0, height * 0.92, 0)) * CFrame.Angles(0.4, yaw, 0.6),
+		})
+	end
+end
+
+local function makeFern(folder, pos, rng)
+	local model = Instance.new("Model")
+	model.Name = "Fern"
+	model.Parent = folder
+	local fronds = rng:NextInteger(4, 6)
+	for i = 1, fronds do
+		local angle = (i / fronds) * math.pi * 2
+		part({
+			Name = "Frond",
+			Parent = model,
+			Size = Vector3.new(0.15, 0.08, rng:NextNumber(1.6, 2.8)),
+			Color = Color3.fromRGB(46, 92, 48):Lerp(Color3.fromRGB(80, 120, 60), rng:NextNumber()),
+			Material = Enum.Material.Grass,
+			CanCollide = false,
+			CastShadow = false,
+			CFrame = CFrame.new(pos + Vector3.new(0, 0.4, 0))
+				* CFrame.Angles(math.rad(rng:NextNumber(35, 70)), angle, 0)
+				* CFrame.new(0, 0, -0.8),
+		})
+	end
+end
+
+local function makeRock(folder, pos, rng, scale)
+	local model = Instance.new("Model")
+	model.Name = "Rock"
+	model.Parent = folder
+	local n = rng:NextInteger(2, 4)
+	for i = 1, n do
+		part({
+			Name = "Stone",
+			Parent = model,
+			Size = Vector3.new(rng:NextNumber(2, 6), rng:NextNumber(1.2, 3.4), rng:NextNumber(2, 5)) * scale,
+			Color = Color3.fromRGB(78, 82, 76):Lerp(Color3.fromRGB(48, 62, 50), rng:NextNumber(0, 0.4)),
+			Material = i == 1 and Enum.Material.Rock or Enum.Material.Slate,
+			CanCollide = true,
+			CFrame = CFrame.new(pos + Vector3.new(rng:NextNumber(-1.2, 1.2), rng:NextNumber(0.2, 1.1) * scale, rng:NextNumber(-1.2, 1.2)))
+				* CFrame.Angles(rng:NextNumber(-0.2, 0.2), rng:NextNumber(0, 3), rng:NextNumber(-0.2, 0.2)),
+		})
+	end
+end
+
+local function makeLog(folder, pos, rng)
+	local yaw = rng:NextNumber(0, math.pi * 2)
+	local length = rng:NextNumber(8, 16)
+	part({
+		Name = "Log",
+		Parent = folder,
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(length, rng:NextNumber(1.1, 1.8), rng:NextNumber(1.1, 1.8)),
+		Color = Color3.fromRGB(58, 46, 34),
+		Material = Enum.Material.Wood,
+		CanCollide = true,
+		CFrame = CFrame.new(pos + Vector3.new(0, 0.8, 0)) * CFrame.Angles(0, yaw, 0) * CFrame.Angles(0, 0, math.rad(90)),
+	})
+end
+
+local function makeMushroom(folder, pos, rng)
+	local stemH = rng:NextNumber(0.4, 0.9)
+	part({
+		Name = "Stem",
+		Parent = folder,
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(stemH, 0.25, 0.25),
+		Color = Color3.fromRGB(214, 206, 186),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		CastShadow = false,
+		CFrame = CFrame.new(pos + Vector3.new(0, stemH * 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)),
+	})
+	part({
+		Name = "Cap",
+		Parent = folder,
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(0.9, 0.45, 0.9),
+		Color = rng:NextNumber() > 0.7 and Color3.fromRGB(120, 48, 36) or Color3.fromRGB(92, 62, 42),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		CastShadow = false,
+		CFrame = CFrame.new(pos + Vector3.new(0, stemH + 0.15, 0)),
+	})
+end
+
+local function makeStones(folder, center)
+	for i = 1, 7 do
+		local angle = (i / 7) * math.pi * 2 + 0.2
+		local radius = 16 + (i % 2) * 3
+		local pos = center + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
+		local ground = groundAt(pos.X, pos.Z)
+		if ground then
+			local fallen = i == 3
+			local height = fallen and 7 or (9 + (i % 3) * 2)
+			part({
+				Name = "StandingStone",
+				Parent = folder,
+				Size = Vector3.new(2.2, height, 1.1),
+				Color = Color3.fromRGB(86, 90, 82),
+				Material = Enum.Material.Slate,
+				CanCollide = true,
+				CFrame = CFrame.new(ground + Vector3.new(0, fallen and 0.6 or height * 0.45, 0))
+					* CFrame.Angles(fallen and math.rad(78) or math.rad((i - 4) * 2), angle, 0),
+			})
+		end
+	end
+	part({
+		Name = "Lintel",
+		Parent = folder,
+		Size = Vector3.new(8, 1.2, 1.4),
+		Color = Color3.fromRGB(70, 78, 68),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = CFrame.new(center + Vector3.new(2, 8.5, 4)),
+	})
+end
+
+local function scatter(folder, rng)
+	local trees = Instance.new("Folder")
+	trees.Name = "Trees"
+	trees.Parent = folder
+	local under = Instance.new("Folder")
+	under.Name = "Undergrowth"
+	under.Parent = folder
+	local stones = Instance.new("Folder")
+	stones.Name = "Stones"
+	stones.Parent = folder
+
+	local placed = 0
+	local attempts = 0
+	while placed < 420 and attempts < 2200 do
+		attempts += 1
+		local x = rng:NextNumber(MIN_X + 30, 360)
+		local z = rng:NextNumber(MIN_Z + 30, MAX_Z - 30)
+		local _, _, _, forest, pale = sampleColumn(x, z)
+		if forest > 0.22 and rng:NextNumber() < forest then
+			local pos = groundAt(x, z)
+			if pos and pos.Y > SEA + 1.5 then
+				local kind = "oak"
+				if x > 180 and rng:NextNumber() < 0.45 then
+					kind = "snag"
+				elseif z < -60 and pale > 0.52 and rng:NextNumber() < 0.7 then
+					kind = "pale"
+				elseif rng:NextNumber() > 0.9 then
+					kind = "giant"
+				elseif rng:NextNumber() < 0.07 then
+					kind = "snag"
+				end
+				makeTree(trees, pos, rng, kind)
+				placed += 1
+				if placed % 35 == 0 then
+					task.wait()
+				end
+			end
+		end
+	end
+
+	for _ = 1, 520 do
+		local x = rng:NextNumber(MIN_X + 20, 340)
+		local z = rng:NextNumber(MIN_Z + 20, MAX_Z - 20)
+		local _, _, _, forest = sampleColumn(x, z)
+		if forest > 0.3 and rng:NextNumber() < forest then
+			local pos = groundAt(x, z)
+			if pos and pos.Y > SEA + 2 then
+				local roll = rng:NextNumber()
+				if roll < 0.62 then
+					makeFern(under, pos, rng)
+				elseif roll < 0.8 then
+					makeMushroom(under, pos, rng)
+				elseif roll < 0.9 then
+					makeRock(stones, pos, rng, rng:NextNumber(0.45, 1))
+				else
+					makeLog(under, pos, rng)
+				end
+			end
+		end
+	end
+
+	-- Cliff rocks and sea stacks.
+	for _ = 1, 40 do
+		local x = rng:NextNumber(240, 470)
+		local z = rng:NextNumber(-400, 400)
+		local pos = groundAt(x, z)
+		if pos then
+			makeRock(stones, pos, rng, rng:NextNumber(1.2, 2.4))
+		else
+			-- Stack rising out of the water.
+			part({
+				Name = "SeaStack",
+				Parent = stones,
+				Size = Vector3.new(rng:NextNumber(6, 14), rng:NextNumber(10, 28), rng:NextNumber(6, 14)),
+				Color = Color3.fromRGB(78, 84, 80),
+				Material = Enum.Material.Rock,
+				CanCollide = true,
+				CFrame = CFrame.new(x, SEA + rng:NextNumber(0, 6), z) * CFrame.Angles(0, rng:NextNumber(0, 3), rng:NextNumber(-0.08, 0.08)),
+			})
+		end
+	end
+
+	local ruinAt = Vector3.new(-8, 0, 70)
+	local ruinGround = groundAt(ruinAt.X, ruinAt.Z)
+	if ruinGround then
+		makeStones(stones, ruinGround)
+	end
+
+	print(string.format("[Drenchwood] %d trees in the rain.", placed))
+end
+
+local function addRain(folder)
+	local rainFolder = Instance.new("Folder")
+	rainFolder.Name = "Rain"
+	rainFolder.Parent = folder
+	for x = -384, 384, 256 do
+		for z = -384, 384, 256 do
+			local volume = part({
+				Name = "RainVolume",
+				Parent = rainFolder,
+				Size = Vector3.new(260, 1, 260),
+				Position = Vector3.new(x, 130, z),
+				Transparency = 1,
+				CanCollide = false,
+				CastShadow = false,
+			})
+			local rain = Instance.new("ParticleEmitter")
+			rain.Name = "Rain"
+			rain.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+			rain.EmissionDirection = Enum.NormalId.Bottom
+			rain.Rate = 180
+			rain.Lifetime = NumberRange.new(0.7, 1.15)
+			rain.Speed = NumberRange.new(48, 70)
+			rain.Acceleration = Vector3.new(6, -30, 2)
+			rain.SpreadAngle = Vector2.new(4, 4)
+			rain.LightEmission = 0.35
+			rain.LightInfluence = 0.4
+			rain.Size = NumberSequence.new(0.12)
+			rain.Squash = NumberSequence.new(7)
+			rain.Transparency = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 0.35),
+				NumberSequenceKeypoint.new(1, 0.7),
+			})
+			rain.Color = ColorSequence.new(Color3.fromRGB(210, 220, 216))
+			rain.Parent = volume
+
+			local mist = Instance.new("ParticleEmitter")
+			mist.Name = "Mist"
+			mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
+			mist.Rate = 6
+			mist.Lifetime = NumberRange.new(8, 14)
+			mist.Speed = NumberRange.new(0.4, 1.2)
+			mist.Rotation = NumberRange.new(0, 360)
+			mist.RotSpeed = NumberRange.new(-8, 8)
+			mist.Size = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 18),
+				NumberSequenceKeypoint.new(1, 40),
+			})
+			mist.Transparency = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 0.75),
+				NumberSequenceKeypoint.new(0.5, 0.88),
+				NumberSequenceKeypoint.new(1, 1),
+			})
+			mist.Color = ColorSequence.new(Color3.fromRGB(186, 196, 188))
+			mist.LightEmission = 0.05
+			mist.Parent = volume
+		end
+	end
+end
+
+local function addSpawn(folder)
+	local x, z = -420, -24
+	local pos = groundAt(x, z)
+	if not pos then
+		pos = Vector3.new(x, 70, z)
+	end
+	local pad = part({
+		Name = "Lookout",
+		Parent = folder,
+		Size = Vector3.new(18, 1.2, 14),
+		Color = Color3.fromRGB(70, 74, 68),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = CFrame.new(pos + Vector3.new(0, 0.4, 0)),
+	})
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "LookoutSpawn"
+	spawn.Size = Vector3.new(8, 1, 8)
+	spawn.Anchored = true
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.CanCollide = true
+	spawn.Material = Enum.Material.Slate
+	spawn.Color = Color3.fromRGB(62, 68, 60)
+	spawn.Transparency = 1
+	spawn.CFrame = pad.CFrame + Vector3.new(0, 2, 0)
+	spawn.Parent = folder
+
+	-- A low mossy bench of stone, so the overlook reads as a place to stand.
+	part({
+		Name = "SeatStone",
+		Parent = folder,
+		Size = Vector3.new(6, 1.4, 2),
+		Color = Color3.fromRGB(64, 74, 62),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = pad.CFrame * CFrame.new(0, 1.2, 4),
+	})
+end
+
+function MapBuilder.isBuilt()
+	return workspace:FindFirstChild("Drenchwood") ~= nil
+end
+
+function MapBuilder.build()
+	if workspace:FindFirstChild("Drenchwood") or workspace:FindFirstChild("DrenchwoodLock") then
+		return false
+	end
+	local lock = Instance.new("Folder")
+	lock.Name = "DrenchwoodLock"
+	lock.Parent = workspace
+
+	local baseplate = workspace:FindFirstChild("Baseplate")
+	if baseplate then
+		baseplate:Destroy()
+	end
+	local oldWelcome = workspace:FindFirstChild("PRESS_PLAY_F5")
+	if oldWelcome then
+		oldWelcome:Destroy()
+	end
+
+	print("[Drenchwood] Growing the forest. This takes a little while. Then File > Save.")
+
+	local ok, err = pcall(function()
+		workspace.StreamingEnabled = false
+		workspace.FallenPartsDestroyHeight = -300
+		writeTerrain()
+
+		local root = Instance.new("Folder")
+		root.Name = "Drenchwood"
+		root.Parent = workspace
+
+		local rng = Random.new(SEED)
+		scatter(root, rng)
+		addRain(root)
+		addSpawn(root)
+	end)
+
+	if not ok then
+		warn("[Drenchwood] The forest failed to grow: " .. tostring(err))
+		local partial = workspace:FindFirstChild("Drenchwood")
+		if partial then
+			partial:Destroy()
+		end
+		lock:Destroy()
+		return false
+	end
+
+	print("[Drenchwood] Done. West ridge is the lookout. The sea is east. Rain does not stop.")
+	return true
+end
+
+function MapBuilder.startAmbience()
+	if SoundService:FindFirstChild("DrenchRain") then
+		return
+	end
+	local rain = Instance.new("Sound")
+	rain.Name = "DrenchRain"
+	rain.SoundId = "rbxassetid://138191657"
+	rain.Looped = true
+	rain.Volume = 0.42
+	rain.Parent = SoundService
+	rain:Play()
+
+	local thunder = Instance.new("Sound")
+	thunder.Name = "DrenchThunder"
+	thunder.SoundId = "rbxassetid://138186576"
+	thunder.Volume = 0.55
+	thunder.Parent = SoundService
+
+	task.spawn(function()
+		local rng = Random.new(SEED + 3)
+		while rain.Parent do
+			task.wait(rng:NextNumber(22, 48))
+			if not rain.Parent then
+				break
+			end
+			local grade = Lighting:FindFirstChild("DrenchGrade")
+			thunder.TimePosition = 0
+			thunder:Play()
+			if grade then
+				local previous = grade.Brightness
+				grade.Brightness = 0.22
+				task.wait(0.08)
+				if grade.Parent then
+					grade.Brightness = previous
+				end
+				task.wait(rng:NextNumber(0.35, 0.7))
+				if grade.Parent then
+					grade.Brightness = 0.08
+					task.wait(0.05)
+					grade.Brightness = previous
+				end
+			end
+		end
+	end)
+end
+
+-- Keep a stable reference so the module always returns the builder.
+return MapBuilder
+]]></ProtectedString></Properties>
+</Item>
+</Item>
+<Item class="ServerScriptService" referent="RBX00000000000000000000000000000005">
+<Properties>
+<string name="Name">ServerScriptService</string></Properties>
+<Item class="Script" referent="RBX00000000000000000000000000000002">
+<Properties>
+<string name="Name">BuildInStudio</string><ProtectedString name="Source"><![CDATA[-- Runs when the place is opened in Studio, so the forest exists before you press Play.
+local RunService = game:GetService("RunService")
+if not RunService:IsStudio() then
+	return
+end
+
+local builder = require(game:GetService("ReplicatedStorage"):WaitForChild("MapBuilder"))
+builder.build()
+]]></ProtectedString><token name="RunContext">3</token></Properties>
+</Item>
+<Item class="Script" referent="RBX00000000000000000000000000000003">
+<Properties>
+<string name="Name">BuildOnServer</string><ProtectedString name="Source"><![CDATA[-- If the forest was not saved from Studio yet, grow it when the server starts.
+local builder = require(game:GetService("ReplicatedStorage"):WaitForChild("MapBuilder"))
+builder.build()
+builder.startAmbience()
+]]></ProtectedString><token name="RunContext">1</token></Properties>
+</Item>
+</Item>
+<Item class="StarterPlayer" referent="RBX00000000000000000000000000000007">
+<Properties>
+<string name="Name">StarterPlayer</string><float name="CameraMaxZoomDistance">80</float><float name="CameraMinZoomDistance">8</float></Properties>
+<Item class="StarterPlayerScripts" referent="RBX00000000000000000000000000000006">
+<Properties>
+<string name="Name">StarterPlayerScripts</string></Properties>
+</Item>
+</Item>
+</roblox>

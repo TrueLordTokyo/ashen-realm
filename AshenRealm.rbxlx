@@ -2,2321 +2,931 @@
 <Meta name="ExplicitAutoJoints">true</Meta>
 <External>null</External>
 <External>nil</External>
-<Item class="Workspace" referent="RBX0000000000000000000000000000000E">
+<Item class="Workspace" referent="RBX0000000000000000000000000000000A">
 <Properties>
-<string name="Name">Workspace</string><float name="Gravity">196.2</float></Properties>
-<Item class="Part" referent="RBX00000000000000000000000000000001">
-<Properties>
-<string name="Name">Baseplate</string><bool name="Anchored">true</bool><Vector3 name="Size"><X>512</X><Y>16</Y><Z>512</Z></Vector3><Vector3 name="Position"><X>0</X><Y>-8</Y><Z>0</Z></Vector3><Color3 name="Color"><R>0.35</R><G>0.48</G><B>0.32</B></Color3></Properties>
+<string name="Name">Workspace</string><float name="Gravity">196.2</float><bool name="StreamingEnabled">false</bool></Properties>
 </Item>
-<Item class="Part" referent="RBX00000000000000000000000000000002">
+<Item class="Lighting" referent="RBX00000000000000000000000000000009">
 <Properties>
-<string name="Name">PRESS_PLAY_F5</string><bool name="Anchored">true</bool><Vector3 name="Size"><X>14</X><Y>14</Y><Z>2</Z></Vector3><Vector3 name="Position"><X>0</X><Y>10</Y><Z>36</Z></Vector3><Color3 name="Color"><R>0.85</R><G>0.62</G><B>0.28</B></Color3></Properties>
-<Item class="BillboardGui" referent="RBX00000000000000000000000000000003">
+<string name="Name">Lighting</string><float name="ClockTime">15.6</float><float name="Brightness">1.15</float><Color3 name="Ambient"><R>0.36</R><G>0.41</G><B>0.38</B></Color3><Color3 name="OutdoorAmbient"><R>0.54</R><G>0.59</G><B>0.56</B></Color3><Color3 name="FogColor"><R>0.66</R><G>0.7</G><B>0.67</B></Color3><float name="FogStart">28</float><float name="FogEnd">520</float><bool name="GlobalShadows">true</bool></Properties>
+<Item class="Atmosphere" referent="RBX00000000000000000000000000000008">
 <Properties>
-<string name="Name">PlayHint</string><bool name="AlwaysOnTop">true</bool><float name="MaxDistance">400</float><Vector3 name="StudsOffset"><X>0</X><Y>10</Y><Z>0</Z></Vector3><UDim2 name="Size"><XS>0</XS><XO>520</XO><YS>0</YS><YO>120</YO></UDim2><Ref name="Adornee">RBX00000000000000000000000000000002</Ref></Properties>
-<Item class="TextLabel" referent="RBX00000000000000000000000000000004">
-<Properties>
-<string name="Name">Label</string><string name="Text">ASHEN REALM  —  press Play (F5)</string><bool name="TextScaled">true</bool><float name="BackgroundTransparency">0.25</float><Color3 name="BackgroundColor3"><R>0.08</R><G>0.07</G><B>0.06</B></Color3><Color3 name="TextColor3"><R>0.95</R><G>0.9</G><B>0.78</B></Color3><UDim2 name="Size"><XS>1</XS><XO>0</XO><YS>1</YS><YO>0</YO></UDim2></Properties>
+<string name="Name">DrenchAir</string><float name="Density">0.48</float><float name="Haze">2.6</float><float name="Glare">0.04</float><Color3 name="Color"><R>0.69</R><G>0.74</G><B>0.71</B></Color3></Properties>
 </Item>
 </Item>
-</Item>
-</Item>
-
-<Item class="Lighting" referent="RBX0000000000000000000000000000000D">
-<Properties>
-<string name="Name">Lighting</string><float name="ClockTime">17.4</float><float name="Brightness">2</float><Color3 name="Ambient"><R>0.3</R><G>0.32</G><B>0.38</B></Color3><Color3 name="OutdoorAmbient"><R>0.5</R><G>0.52</G><B>0.56</B></Color3><Color3 name="FogColor"><R>0.66</R><G>0.7</G><B>0.74</B></Color3><float name="FogStart">120</float><float name="FogEnd">700</float><bool name="GlobalShadows">true</bool></Properties>
-<Item class="Atmosphere" referent="RBX0000000000000000000000000000000C">
-<Properties>
-<string name="Name">Atmosphere</string><float name="Density">0.32</float><float name="Haze">1.1</float><Color3 name="Color"><R>0.75</R><G>0.78</G><B>0.82</B></Color3></Properties>
-</Item>
-</Item>
-
-<Item class="ReplicatedStorage" referent="RBX0000000000000000000000000000000A">
+<Item class="ReplicatedStorage" referent="RBX00000000000000000000000000000004">
 <Properties>
 <string name="Name">ReplicatedStorage</string></Properties>
-<Item class="ModuleScript" referent="RBX00000000000000000000000000000005">
+<Item class="ModuleScript" referent="RBX00000000000000000000000000000001">
 <Properties>
-<string name="Name">AshenConfig</string><ProtectedString name="Source"><![CDATA[-- Ashen Realm
--- Edit houses, damage, round length, and map points here.
--- This is an original throne-war. Do not rename houses to copyrighted
--- Game of Thrones names if you plan to publish on Roblox.
+<string name="Name">MapBuilder</string><ProtectedString name="Source"><![CDATA[-- Drenchwood
+-- A rain-soaked coastal forest. Terrain, not a baseplate.
+-- No people. The map is the whole game for now.
 
-local Config = {}
-
-Config.RoundLength = 60 * 8
-Config.Intermission = 8
-Config.ClaimsToWin = 3
-Config.BannerCaptureTime = 6
-Config.ThroneChannelTime = 7
-Config.ThroneBannersNeeded = 2
-Config.SwordDamage = 24
-Config.RuneDamage = 36
-Config.SwordRange = 8
-Config.SwordCooldown = 0.55
-Config.RuneCost = 45
-Config.PlayerKillCoins = 12
-Config.RaiderKillCoins = 8
-Config.GoldmereBonusCoins = 8
-Config.ClaimCoins = 20
-Config.RespawnTime = 5
-Config.SpawnShield = 4
-Config.ColdZ = -205
-Config.ColdDamage = 6
-Config.FrostholmNightBonus = 1.25
-Config.TideholmSpeed = 20
-Config.BaseSpeed = 16
-
-Config.HouseOrder = { "Frostholm", "Goldmere", "Wyrmreach", "Tideholm" }
-
-Config.Houses = {
-	Frostholm = {
-		id = "Frostholm",
-		name = "House Frostholm",
-		motto = "The Pale Does Not Yield",
-		blurb = "Wardens of the Pale Wall. After dusk their steel bites harder, and the cold beyond the wall heals them.",
-		bonus = "Night damage and they thrive in the snow.",
-		teamColor = "Cyan",
-		color = Color3.fromRGB(126, 206, 224),
-		accent = Color3.fromRGB(232, 246, 252),
-		ink = Color3.fromRGB(12, 32, 40),
-		sigil = "HART",
-	},
-	Goldmere = {
-		id = "Goldmere",
-		name = "House Goldmere",
-		motto = "Coin Outlives Kings",
-		blurb = "The vault city. Every rival they drop pays more, and the smith sells them power sooner.",
-		bonus = "Extra coins on every kill.",
-		teamColor = "Bright yellow",
-		color = Color3.fromRGB(224, 176, 62),
-		accent = Color3.fromRGB(92, 18, 24),
-		ink = Color3.fromRGB(42, 24, 8),
-		sigil = "SCALE",
-	},
-	Wyrmreach = {
-		id = "Wyrmreach",
-		name = "House Wyrmreach",
-		motto = "Fire Remembers",
-		blurb = "Exiles of the wyrm. Dragonfire rolls off them, and their swords are heavier.",
-		bonus = "Immune to dragonfire. Stronger blade.",
-		teamColor = "Really red",
-		color = Color3.fromRGB(168, 42, 42),
-		accent = Color3.fromRGB(28, 18, 22),
-		ink = Color3.fromRGB(255, 228, 220),
-		sigil = "WYRM",
-	},
-	Tideholm = {
-		id = "Tideholm",
-		name = "House Tideholm",
-		motto = "No Shore Holds Us",
-		blurb = "Storm sailors. First to the banner, first off the throne steps.",
-		bonus = "Faster on foot.",
-		teamColor = "Bright blue",
-		color = Color3.fromRGB(46, 118, 168),
-		accent = Color3.fromRGB(216, 232, 238),
-		ink = Color3.fromRGB(240, 248, 252),
-		sigil = "WAVE",
-	},
-}
-
-Config.Banners = {
-	{ id = "East", label = "East Banner", position = Vector3.new(120, 0, 12) },
-	{ id = "West", label = "West Banner", position = Vector3.new(-120, 0, 12) },
-	{ id = "Pale", label = "Pale Banner", position = Vector3.new(0, 0, -155) },
-}
-
-Config.ThronePosition = Vector3.new(0, 0, -78)
-Config.Camps = {
-	Frostholm = Vector3.new(0, 0, -185),
-	Goldmere = Vector3.new(150, 0, 78),
-	Tideholm = Vector3.new(-150, 0, 78),
-	Wyrmreach = Vector3.new(10, 0, 158),
-}
-Config.Lobby = Vector3.new(0, 0, 88)
-Config.SafeCenter = Vector3.new(0, 8, 88)
-Config.SafeHalf = Vector3.new(36, 24, 28)
-
-Config.MapBounds = { minX = -230, maxX = 230, minZ = -270, maxZ = 200 }
-
-Config.RaiderSpawns = {
-	Vector3.new(96, 0, -90),
-	Vector3.new(-96, 0, -90),
-	Vector3.new(70, 0, 120),
-	Vector3.new(-80, 0, 48),
-	Vector3.new(36, 0, -168),
-	Vector3.new(-30, 0, 175),
-}
-
-function Config.getHouse(id)
-	return Config.Houses[id]
-end
-
-function Config.teamName(id)
-	return "House " .. id
-end
-
-function Config.inSafe(position)
-	local c = Config.SafeCenter
-	local h = Config.SafeHalf
-	return math.abs(position.X - c.X) <= h.X
-		and math.abs(position.Y - c.Y) <= h.Y
-		and math.abs(position.Z - c.Z) <= h.Z
-end
-
-return Config
-]]></ProtectedString></Properties>
-</Item>
-</Item>
-
-<Item class="ServerScriptService" referent="RBX0000000000000000000000000000000B">
-<Properties>
-<string name="Name">ServerScriptService</string></Properties>
-<Item class="Script" referent="RBX00000000000000000000000000000006">
-<Properties>
-<string name="Name">AshenServer</string><ProtectedString name="Source"><![CDATA[-- Ashen Realm server. Builds the map on play, then runs the throne war.
--- Map, combat, banners, the Cinder Seat, dragonfire, and Ash Marauders.
-
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
-local Teams = game:GetService("Teams")
-local Debris = game:GetService("Debris")
-local PathfindingService = game:GetService("PathfindingService")
-local RunService = game:GetService("RunService")
+local SoundService = game:GetService("SoundService")
 
-local Config = require(ReplicatedStorage:WaitForChild("AshenConfig"))
+local MapBuilder = {}
 
-Players.CharacterAutoLoads = false
-Players.RespawnTime = Config.RespawnTime
+local VOXEL = 4
+local MIN_X, MAX_X = -512, 512
+local MIN_Z, MAX_Z = -512, 512
+local MIN_Y, MAX_Y = 0, 128
+local CHUNK = 128
+local SEA = 18
+local SEED = 90411
 
-local remotesFolder = ReplicatedStorage:FindFirstChild("AshenRemotes")
-if remotesFolder then
-	remotesFolder:Destroy()
-end
-remotesFolder = Instance.new("Folder")
-remotesFolder.Name = "AshenRemotes"
-remotesFolder.Parent = ReplicatedStorage
+local PATH = {
+	Vector3.new(-430, 0, -30),
+	Vector3.new(-300, 0, 0),
+	Vector3.new(-170, 0, 55),
+	Vector3.new(-40, 0, 18),
+	Vector3.new(90, 0, -24),
+	Vector3.new(210, 0, 36),
+	Vector3.new(340, 0, 8),
+	Vector3.new(430, 0, -10),
+}
 
-local function makeRemote(name)
-	local remote = Instance.new("RemoteEvent")
-	remote.Name = name
-	remote.Parent = remotesFolder
-	return remote
-end
-
-local ChooseHouse = makeRemote("ChooseHouse")
-local Swing = makeRemote("Swing")
-local Block = makeRemote("Block")
-local Toast = makeRemote("Toast")
-local HitFx = makeRemote("HitFx")
-
-local matchFolder = ReplicatedStorage:FindFirstChild("AshenMatch")
-if matchFolder then
-	matchFolder:Destroy()
-end
-matchFolder = Instance.new("Folder")
-matchFolder.Name = "AshenMatch"
-matchFolder.Parent = ReplicatedStorage
-
-local teamsById = {}
-local claims = {}
-local banners = {}
-local roundEndsAt = 0
-local roundLive = true
-local throneProgress = 0
-local throneHouse = ""
-local throneLockUntil = 0
-local lastSwing = {}
-local choosing = {}
-
-for _, id in ipairs(Config.HouseOrder) do
-	claims[id] = 0
-	local house = Config.Houses[id]
-	local team = Instance.new("Team")
-	team.Name = Config.teamName(id)
-	team.TeamColor = BrickColor.new(house.teamColor)
-	team.AutoAssignable = false
-	team.Parent = Teams
-	teamsById[id] = team
+local function smoothstep(a, b, x)
+	local t = math.clamp((x - a) / (b - a), 0, 1)
+	return t * t * (3 - 2 * t)
 end
 
-local function syncState()
-	matchFolder:SetAttribute("RoundEnds", roundEndsAt)
-	matchFolder:SetAttribute("RoundLive", roundLive)
-	matchFolder:SetAttribute("ThroneProgress", throneProgress)
-	matchFolder:SetAttribute("ThroneHouse", throneHouse)
-	matchFolder:SetAttribute("ClaimsToWin", Config.ClaimsToWin)
-	for _, id in ipairs(Config.HouseOrder) do
-		matchFolder:SetAttribute("Claims_" .. id, claims[id] or 0)
-	end
-	for _, banner in ipairs(banners) do
-		matchFolder:SetAttribute("Banner_" .. banner.id, banner.owner or "Neutral")
-		matchFolder:SetAttribute("BannerProgress_" .. banner.id, banner.progress or 0)
-	end
+local function fade(t)
+	return t * t * t * (t * (t * 6 - 15) + 10)
 end
 
-local function toastAll(text)
-	Toast:FireAllClients(text)
+local function hash2(ix, iz)
+	local n = math.sin(ix * 127.1 + iz * 311.7 + SEED * 0.01) * 43758.5453
+	return n - math.floor(n)
 end
 
-local function toast(player, text)
-	Toast:FireClient(player, text)
+local function valueNoise(x, z)
+	local x0 = math.floor(x)
+	local z0 = math.floor(z)
+	local tx = fade(x - x0)
+	local tz = fade(z - z0)
+	local v00 = hash2(x0, z0)
+	local v10 = hash2(x0 + 1, z0)
+	local v01 = hash2(x0, z0 + 1)
+	local v11 = hash2(x0 + 1, z0 + 1)
+	local a = v00 + (v10 - v00) * tx
+	local b = v01 + (v11 - v01) * tx
+	return a + (b - a) * tz
 end
 
-local function houseIdOf(player)
-	return player:GetAttribute("HouseId")
-end
-
-local function bannerCount(id)
-	local n = 0
-	for _, banner in ipairs(banners) do
-		if banner.owner == id then
-			n += 1
+local function distToPath(x, z)
+	local best = 1e9
+	for i = 1, #PATH - 1 do
+		local a = PATH[i]
+		local b = PATH[i + 1]
+		local abx, abz = b.X - a.X, b.Z - a.Z
+		local apx, apz = x - a.X, z - a.Z
+		local ab2 = abx * abx + abz * abz
+		local t = 0
+		if ab2 > 0 then
+			t = math.clamp((apx * abx + apz * abz) / ab2, 0, 1)
+		end
+		local dx = x - (a.X + abx * t)
+		local dz = z - (a.Z + abz * t)
+		local d = math.sqrt(dx * dx + dz * dz)
+		if d < best then
+			best = d
 		end
 	end
-	return n
+	return best
 end
 
-local function playSound(id, parent, volume)
-	local sound = Instance.new("Sound")
-	sound.SoundId = id
-	sound.Volume = volume or 0.5
-	sound.Parent = parent or workspace
-	sound:Play()
-	Debris:AddItem(sound, 4)
+local function meadowMask(x, z)
+	local dx = (x + 50) / 78
+	local dz = (z - 24) / 64
+	return math.clamp(1 - (dx * dx + dz * dz), 0, 1)
 end
 
--- Map ---------------------------------------------------------------------------
+local function heightOnly(x, z)
+	local n = valueNoise(x * 0.0042, z * 0.0042) * 0.62 + valueNoise(x * 0.009 + 3, z * 0.009 - 2) * 0.38
+	local h = 30 + n * 40
+	local ridge = math.exp(-((x + 400) ^ 2) / 20000) * math.exp(-(z * z) / 50000)
+	h += ridge * 24
+	local drop = smoothstep(250, 390, x)
+	h = h * (1 - drop) + (8 + (1 - drop) * 6) * drop
+	return h, drop, n
+end
+
+local function sampleColumn(x, z)
+	local h, drop, n = heightOnly(x, z)
+
+	local streamZ = math.sin(x * 0.012) * 70 + 30
+	local streamDist = math.abs(z - streamZ)
+	local streamWidth = 16 + smoothstep(-200, 300, x) * 12
+	local carve = 0
+	if streamDist < streamWidth then
+		local u = 1 - streamDist / streamWidth
+		carve = u * u * 11
+	end
+	h -= carve
+
+	local pdx, pdz = x + 16, z - 78
+	local pd = math.sqrt(pdx * pdx + pdz * pdz)
+	local pool = 0
+	if pd < 26 then
+		pool = (1 - pd / 26) ^ 2 * 14
+	end
+	h -= pool
+
+	local pathD = distToPath(x, z)
+	if pathD < 8 and x < 360 then
+		h -= (1 - pathD / 8) * 1.3
+	end
+
+	h = math.clamp(h, 2, 110)
+
+	local waterTop = nil
+	if carve > 7 then
+		waterTop = h + 2.2
+	end
+	if pool > 8 then
+		waterTop = math.max(waterTop or 0, h + 3)
+	end
+	if x > 300 then
+		waterTop = math.max(waterTop or 0, SEA)
+	end
+
+	local hE = heightOnly(x + 10, z)
+	local hS = heightOnly(x, z + 10)
+	local slope = math.abs(hE - h) + math.abs(hS - h)
+
+	local meadow = meadowMask(x, z)
+	local material = Enum.Material.Grass
+	if x > 280 and h < SEA + 7 then
+		material = Enum.Material.Sand
+	elseif slope > 14 or (drop > 0.45 and drop < 0.88 and slope > 6) then
+		material = Enum.Material.Rock
+	elseif pathD < 5 and x < 360 then
+		material = Enum.Material.Mud
+	elseif carve > 3 or pool > 2 then
+		material = Enum.Material.Mud
+	elseif meadow < 0.2 and n > 0.48 then
+		material = Enum.Material.LeafyGrass
+	end
+
+	local forest = 0.82 - meadow * 1.05 - smoothstep(230, 370, x) * 0.9
+	if carve > 6 then
+		forest -= 0.35
+	end
+	local pale = 0
+	if z < -70 and x < 200 then
+		pale = n
+		forest = math.max(forest, 0.5)
+	end
+	forest = math.clamp(forest, 0, 1)
+
+	return h, waterTop, material, forest, pale, meadow, pathD
+end
+
+local function applyLighting()
+	Lighting.ClockTime = 15.6
+	Lighting.Brightness = 1.15
+	Lighting.Ambient = Color3.fromRGB(92, 104, 98)
+	Lighting.OutdoorAmbient = Color3.fromRGB(138, 150, 144)
+	Lighting.ColorShift_Top = Color3.fromRGB(186, 196, 190)
+	Lighting.ColorShift_Bottom = Color3.fromRGB(48, 56, 46)
+	Lighting.EnvironmentDiffuseScale = 0.85
+	Lighting.EnvironmentSpecularScale = 0.55
+	Lighting.GlobalShadows = true
+	Lighting.FogColor = Color3.fromRGB(168, 178, 172)
+	Lighting.FogStart = 28
+	Lighting.FogEnd = 520
+	pcall(function()
+		Lighting.Technology = Enum.Technology.Future
+	end)
+
+	local function effect(className, name)
+		local existing = Lighting:FindFirstChild(name)
+		if existing then
+			return existing
+		end
+		local inst = Instance.new(className)
+		inst.Name = name
+		inst.Parent = Lighting
+		return inst
+	end
+
+	local atmo = effect("Atmosphere", "DrenchAir")
+	atmo.Density = 0.48
+	atmo.Offset = 0.12
+	atmo.Color = Color3.fromRGB(176, 188, 180)
+	atmo.Decay = Color3.fromRGB(86, 98, 90)
+	atmo.Glare = 0.04
+	atmo.Haze = 2.6
+
+	local grade = effect("ColorCorrectionEffect", "DrenchGrade")
+	grade.Saturation = -0.18
+	grade.Contrast = 0.06
+	grade.Brightness = -0.02
+	grade.TintColor = Color3.fromRGB(206, 220, 210)
+
+	local bloom = effect("BloomEffect", "DrenchBloom")
+	bloom.Intensity = 0.25
+	bloom.Size = 18
+	bloom.Threshold = 1.1
+
+	local rays = effect("SunRaysEffect", "DrenchRays")
+	rays.Intensity = 0.04
+	rays.Spread = 0.6
+
+	local terrain = workspace.Terrain
+	terrain.WaterColor = Color3.fromRGB(58, 92, 86)
+	terrain.WaterReflectance = 0.35
+	terrain.WaterTransparency = 0.25
+	terrain.WaterWaveSize = 0.12
+	terrain.WaterWaveSpeed = 6
+	pcall(function()
+		terrain.Decoration = true
+	end)
+	local colors = {
+		Grass = Color3.fromRGB(52, 86, 46),
+		LeafyGrass = Color3.fromRGB(36, 68, 38),
+		Mud = Color3.fromRGB(68, 54, 38),
+		Ground = Color3.fromRGB(54, 44, 32),
+		Rock = Color3.fromRGB(86, 90, 86),
+		Slate = Color3.fromRGB(74, 80, 78),
+		Sand = Color3.fromRGB(112, 108, 90),
+		Water = Color3.fromRGB(58, 92, 86),
+	}
+	for name, color in pairs(colors) do
+		pcall(function()
+			terrain:SetMaterialColor(Enum.Material[name], color)
+		end)
+	end
+
+	local clouds = terrain:FindFirstChild("DrenchClouds")
+	if not clouds then
+		clouds = Instance.new("Clouds")
+		clouds.Name = "DrenchClouds"
+		clouds.Parent = terrain
+	end
+	clouds.Cover = 0.94
+	clouds.Density = 0.78
+	clouds.Color = Color3.fromRGB(178, 184, 180)
+end
+
+local function writeTerrain()
+	local terrain = workspace.Terrain
+	terrain:Clear()
+	applyLighting()
+
+	for x0 = MIN_X, MAX_X - CHUNK, CHUNK do
+		for z0 = MIN_Z, MAX_Z - CHUNK, CHUNK do
+			local region = Region3.new(
+				Vector3.new(x0, MIN_Y, z0),
+				Vector3.new(x0 + CHUNK, MAX_Y, z0 + CHUNK)
+			):ExpandToGrid(VOXEL)
+			local size = region.Size / VOXEL
+			local origin = region.CFrame.Position - region.Size / 2
+			local materials = {}
+			local occupancy = {}
+			for ix = 1, size.X do
+				materials[ix] = {}
+				occupancy[ix] = {}
+				for iy = 1, size.Y do
+					materials[ix][iy] = {}
+					occupancy[ix][iy] = {}
+				end
+			end
+
+			for ix = 1, size.X do
+				for iz = 1, size.Z do
+					local worldX = origin.X + (ix - 0.5) * VOXEL
+					local worldZ = origin.Z + (iz - 0.5) * VOXEL
+					local h, waterTop, topMat = sampleColumn(worldX, worldZ)
+					for iy = 1, size.Y do
+						local worldY = origin.Y + (iy - 1) * VOXEL
+						local solidTop = h
+						if worldY + VOXEL <= solidTop - VOXEL then
+							materials[ix][iy][iz] = Enum.Material.Ground
+							occupancy[ix][iy][iz] = 1
+						elseif worldY < solidTop then
+							local frac = math.clamp((solidTop - worldY) / VOXEL, 0.18, 1)
+							materials[ix][iy][iz] = topMat
+							occupancy[ix][iy][iz] = frac
+						elseif waterTop and worldY < waterTop then
+							materials[ix][iy][iz] = Enum.Material.Water
+							occupancy[ix][iy][iz] = 1
+						else
+							materials[ix][iy][iz] = Enum.Material.Air
+							occupancy[ix][iy][iz] = 0
+						end
+					end
+				end
+			end
+
+			terrain:WriteVoxels(region, VOXEL, materials, occupancy)
+			if z0 == MIN_Z then
+				local step = (x0 - MIN_X) / CHUNK + 1
+				local total = (MAX_X - MIN_X) / CHUNK
+				print(string.format("[Drenchwood] Ground %d / %d", step, total))
+			end
+			task.wait()
+		end
+	end
+end
 
 local function part(props)
-	local piece = Instance.new(props.Class or "Part")
+	local piece = Instance.new("Part")
 	piece.Name = props.Name or "Part"
-	piece.Anchored = props.Anchored ~= false
-	piece.CanCollide = props.CanCollide ~= false
-	piece.Size = props.Size or Vector3.new(4, 1, 4)
+	piece.Anchored = true
+	piece.CanCollide = props.CanCollide == true
+	piece.CastShadow = props.CastShadow ~= false
+	piece.Material = props.Material or Enum.Material.SmoothPlastic
+	piece.Color = props.Color or Color3.fromRGB(80, 80, 80)
+	piece.Size = props.Size or Vector3.new(4, 4, 4)
 	piece.CFrame = props.CFrame or CFrame.new(props.Position or Vector3.zero)
-	piece.Color = props.Color or Color3.fromRGB(120, 116, 110)
-	piece.Material = props.Material or Enum.Material.Slate
-	piece.TopSurface = Enum.SurfaceType.Smooth
-	piece.BottomSurface = Enum.SurfaceType.Smooth
-	piece.Transparency = props.Transparency or 0
 	if props.Shape then
 		piece.Shape = props.Shape
 	end
+	piece.Transparency = props.Transparency or 0
+	piece.TopSurface = Enum.SurfaceType.Smooth
+	piece.BottomSurface = Enum.SurfaceType.Smooth
 	piece.Parent = props.Parent
 	return piece
 end
 
-local function addLight(parent, color, range, brightness)
-	local light = Instance.new("PointLight")
-	light.Color = color
-	light.Range = range or 16
-	light.Brightness = brightness or 1.6
-	light.Parent = parent
+local function groundAt(x, z)
+	local origin = Vector3.new(x, 400, z)
+	local hit = workspace:Raycast(origin, Vector3.new(0, -800, 0))
+	if not hit or hit.Instance ~= workspace.Terrain then
+		return nil
+	end
+	if hit.Material == Enum.Material.Water then
+		return nil
+	end
+	if hit.Normal.Y < 0.72 then
+		return nil
+	end
+	return hit.Position, hit.Normal
 end
 
-local function sign(parent, text, position, color, size)
-	local board = part({
-		Name = "Sign",
-		Parent = parent,
-		Size = size or Vector3.new(10, 4, 0.4),
-		CFrame = CFrame.new(position),
-		Color = color or Color3.fromRGB(48, 36, 28),
-		Material = Enum.Material.WoodPlanks,
-	})
-	local gui = Instance.new("SurfaceGui")
-	gui.Face = Enum.NormalId.Front
-	gui.Parent = board
-	local label = Instance.new("TextLabel")
-	label.BackgroundTransparency = 1
-	label.Size = UDim2.fromScale(1, 1)
-	label.Font = Enum.Font.GothamBold
-	label.TextScaled = true
-	label.TextColor3 = Color3.fromRGB(236, 226, 206)
-	label.Text = text
-	label.Parent = gui
-	local back = Instance.new("SurfaceGui")
-	back.Face = Enum.NormalId.Back
-	back.Parent = board
-	local label2 = label:Clone()
-	label2.Parent = back
-	return board
-end
+local function makeTree(folder, pos, rng, kind)
+	local model = Instance.new("Model")
+	model.Name = kind
+	model.Parent = folder
 
-local function tent(parent, position, color)
-	part({
-		Name = "Tent",
-		Parent = parent,
-		Size = Vector3.new(10, 1, 8),
-		Position = position + Vector3.new(0, 0.5, 0),
-		Color = Color3.fromRGB(92, 70, 48),
-		Material = Enum.Material.WoodPlanks,
-	})
-	part({
-		Name = "TentCloth",
-		Parent = parent,
-		Size = Vector3.new(10, 5, 8),
-		Position = position + Vector3.new(0, 3.2, 0),
-		Color = color,
-		Material = Enum.Material.Fabric,
-		CanCollide = false,
-	})
-	local fire = part({
-		Name = "Campfire",
-		Parent = parent,
-		Size = Vector3.new(2, 0.6, 2),
-		Position = position + Vector3.new(0, 0.4, 5),
-		Color = Color3.fromRGB(255, 140, 40),
-		Material = Enum.Material.Neon,
-		CanCollide = false,
-	})
-	addLight(fire, Color3.fromRGB(255, 150, 60), 14, 1.4)
-end
+	local lean = rng:NextNumber(-0.08, 0.08)
+	local yaw = rng:NextNumber(0, math.pi * 2)
+	local height
+	local radius
+	local bark
+	if kind == "giant" then
+		height = rng:NextNumber(46, 68)
+		radius = rng:NextNumber(2.4, 3.6)
+		bark = Color3.fromRGB(54, 42, 32)
+	elseif kind == "pale" then
+		height = rng:NextNumber(28, 44)
+		radius = rng:NextNumber(0.7, 1.15)
+		bark = Color3.fromRGB(186, 184, 172)
+	elseif kind == "snag" then
+		height = rng:NextNumber(16, 34)
+		radius = rng:NextNumber(0.8, 1.8)
+		bark = Color3.fromRGB(48, 46, 42)
+	else
+		height = rng:NextNumber(22, 40)
+		radius = rng:NextNumber(1.15, 2.1)
+		bark = Color3.fromRGB(62, 48, 36):Lerp(Color3.fromRGB(42, 36, 30), rng:NextNumber())
+	end
 
-local function tree(parent, position)
+	local base = pos + Vector3.new(0, radius * 0.2, 0)
 	local trunk = part({
 		Name = "Trunk",
-		Parent = parent,
+		Parent = model,
 		Shape = Enum.PartType.Cylinder,
-		Size = Vector3.new(7, 1.4, 1.4),
-		CFrame = CFrame.new(position + Vector3.new(0, 3.5, 0)) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(92, 64, 40),
-		Material = Enum.Material.WoodPlanks,
+		Size = Vector3.new(height, radius * 2, radius * 2),
+		Color = bark,
+		Material = Enum.Material.Wood,
+		CanCollide = true,
+		CFrame = CFrame.new(base + Vector3.new(0, height * 0.45, 0))
+			* CFrame.Angles(0, yaw, 0)
+			* CFrame.Angles(0, 0, math.rad(90) + lean),
 	})
-	part({
-		Name = "Crown",
-		Parent = parent,
-		Shape = Enum.PartType.Ball,
-		Size = Vector3.new(8, 7, 8),
-		Position = position + Vector3.new(0, 8.2, 0),
-		Color = Color3.fromRGB(62, 102, 64),
-		Material = Enum.Material.Grass,
-		CanCollide = false,
-	})
-	return trunk
-end
+	model.PrimaryPart = trunk
 
-local function buildBanner(parent, info)
-	local model = Instance.new("Model")
-	model.Name = "Banner_" .. info.id
-	model.Parent = parent
-	local base = part({
-		Name = "Base",
-		Parent = model,
-		Shape = Enum.PartType.Cylinder,
-		Size = Vector3.new(1.2, 8, 8),
-		CFrame = CFrame.new(info.position + Vector3.new(0, 0.6, 0)) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(70, 68, 64),
-		Material = Enum.Material.Slate,
-	})
-	local pole = part({
-		Name = "Pole",
-		Parent = model,
-		Size = Vector3.new(0.6, 14, 0.6),
-		Position = info.position + Vector3.new(0, 7, 0),
-		Color = Color3.fromRGB(186, 176, 150),
-		Material = Enum.Material.Metal,
-	})
-	local flag = part({
-		Name = "Flag",
-		Parent = model,
-		Size = Vector3.new(0.3, 5.5, 7),
-		Position = info.position + Vector3.new(0, 10, 0),
-		Color = Color3.fromRGB(150, 150, 150),
-		Material = Enum.Material.Fabric,
-	})
-	local gui = Instance.new("SurfaceGui")
-	gui.Name = "Mark"
-	gui.Face = Enum.NormalId.Front
-	gui.Parent = flag
-	local label = Instance.new("TextLabel")
-	label.Name = "Sigil"
-	label.BackgroundTransparency = 1
-	label.Size = UDim2.fromScale(1, 1)
-	label.Font = Enum.Font.GothamBlack
-	label.TextScaled = true
-	label.TextColor3 = Color3.new(1, 1, 1)
-	label.Text = "BANNER"
-	label.Parent = gui
-	local gui2 = gui:Clone()
-	gui2.Face = Enum.NormalId.Back
-	gui2.Parent = flag
-	local ring = part({
-		Name = "Ring",
-		Parent = model,
-		Shape = Enum.PartType.Cylinder,
-		Size = Vector3.new(0.25, 16, 16),
-		CFrame = CFrame.new(info.position + Vector3.new(0, 0.2, 0)) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(200, 190, 160),
-		Material = Enum.Material.Neon,
-		CanCollide = false,
-		Transparency = 0.35,
-	})
-	return {
-		id = info.id,
-		label = info.label,
-		position = info.position,
-		owner = nil,
-		progress = 0,
-		progressHouse = nil,
-		flag = flag,
-		ring = ring,
-		labelText = label,
-		labelTextBack = gui2:FindFirstChild("Sigil"),
-		pole = pole,
-		base = base,
-	}
-end
-
-local function paintBanner(banner)
-	local house = banner.owner and Config.Houses[banner.owner]
-	local color = house and house.color or Color3.fromRGB(150, 150, 150)
-	local ink = house and house.ink or Color3.new(1, 1, 1)
-	banner.flag.Color = color
-	banner.ring.Color = color
-	local text = house and house.sigil or "OPEN"
-	banner.labelText.Text = text
-	banner.labelText.TextColor3 = ink
-	if banner.labelTextBack then
-		banner.labelTextBack.Text = text
-		banner.labelTextBack.TextColor3 = ink
+	if kind == "giant" or kind == "oak" then
+		for i = 1, (kind == "giant" and 5 or 3) do
+			local angle = yaw + i * 1.7
+			local reach = radius * (kind == "giant" and 3.2 or 2.4)
+			part({
+				Name = "Root",
+				Parent = model,
+				Size = Vector3.new(radius * 0.7, radius * 0.45, reach),
+				Color = bark:Lerp(Color3.fromRGB(40, 70, 40), 0.25),
+				Material = Enum.Material.Wood,
+				CanCollide = false,
+				CastShadow = false,
+				CFrame = CFrame.new(base, base + Vector3.new(math.cos(angle), -0.2, math.sin(angle)))
+					* CFrame.new(0, 0, -reach * 0.45),
+			})
+		end
 	end
-end
 
-local function buildWyrm(parent)
-	local model = Instance.new("Model")
-	model.Name = "AshWyrm"
-	model.Parent = parent
-	local body = part({
-		Name = "Body",
-		Parent = model,
-		Size = Vector3.new(4, 3, 16),
-		Color = Color3.fromRGB(70, 28, 32),
-		Material = Enum.Material.Slate,
-		CanCollide = false,
-	})
-	model.PrimaryPart = body
-	local function limb(name, size, offset, color)
-		local piece = part({
-			Name = name,
+	if kind ~= "snag" then
+		local leaf = Color3.fromRGB(34, 72, 40)
+		if kind == "pale" then
+			leaf = Color3.fromRGB(118, 138, 96)
+		elseif kind == "giant" then
+			leaf = Color3.fromRGB(28, 58, 34)
+		end
+		local layers = kind == "giant" and 3 or (kind == "pale" and 2 or 2)
+		for layer = 1, layers do
+			local y = height * (0.55 + layer * 0.14)
+			local spread = (kind == "pale" and 7 or 11) + layer * 1.5
+			if kind == "giant" then
+				spread = 16 + layer * 3
+			end
+			local blobs = kind == "pale" and 3 or 5
+			for _ = 1, blobs do
+				local s = spread * rng:NextNumber(0.65, 1.05)
+				part({
+					Name = "Canopy",
+					Parent = model,
+					Shape = Enum.PartType.Ball,
+					Size = Vector3.new(s, s * rng:NextNumber(0.55, 0.85), s),
+					Color = leaf:Lerp(Color3.fromRGB(18, 36, 22), rng:NextNumber(0, 0.45)),
+					Material = Enum.Material.LeafyGrass,
+					CanCollide = false,
+					Transparency = 0.02,
+					CFrame = CFrame.new(base + Vector3.new(
+						rng:NextNumber(-spread * 0.28, spread * 0.28),
+						y + rng:NextNumber(-1.5, 2.5),
+						rng:NextNumber(-spread * 0.28, spread * 0.28)
+					)),
+				})
+			end
+		end
+		if kind == "giant" and rng:NextNumber() > 0.35 then
+			for v = 1, 3 do
+				part({
+					Name = "Moss",
+					Parent = model,
+					Size = Vector3.new(0.35, rng:NextNumber(6, 12), 0.35),
+					Color = Color3.fromRGB(70, 110, 62),
+					Material = Enum.Material.Grass,
+					CanCollide = false,
+					CastShadow = false,
+					Transparency = 0.15,
+					CFrame = CFrame.new(base + Vector3.new(rng:NextNumber(-3, 3), height * 0.7, rng:NextNumber(-3, 3))),
+				})
+			end
+		end
+	else
+		part({
+			Name = "Break",
 			Parent = model,
-			Size = size,
-			Color = color or Color3.fromRGB(90, 36, 40),
-			Material = Enum.Material.Slate,
+			Size = Vector3.new(radius * 2.2, radius, radius * 1.4),
+			Color = Color3.fromRGB(70, 66, 58),
+			Material = Enum.Material.Wood,
 			CanCollide = false,
+			CFrame = CFrame.new(base + Vector3.new(0, height * 0.92, 0)) * CFrame.Angles(0.4, yaw, 0.6),
 		})
-		local weld = Instance.new("WeldConstraint")
-		weld.Part0 = body
-		weld.Part1 = piece
-		weld.Parent = piece
-		piece.CFrame = body.CFrame * offset
-		return piece
 	end
-	limb("Neck", Vector3.new(2.2, 2, 6), CFrame.new(0, 0.6, -9))
-	limb("Head", Vector3.new(3, 2.4, 4), CFrame.new(0, 1.1, -13), Color3.fromRGB(120, 48, 42))
-	limb("Jaw", Vector3.new(2.2, 0.6, 3), CFrame.new(0, 0.2, -14))
-	limb("WingL", Vector3.new(14, 0.4, 6), CFrame.new(-8, 1.4, -1), Color3.fromRGB(48, 18, 24))
-	limb("WingR", Vector3.new(14, 0.4, 6), CFrame.new(8, 1.4, -1), Color3.fromRGB(48, 18, 24))
-	limb("Tail", Vector3.new(2, 1.4, 10), CFrame.new(0, 0.2, 12))
-	limb("Horn", Vector3.new(0.4, 2.4, 0.4), CFrame.new(0.6, 2.4, -13), Color3.fromRGB(230, 200, 140))
-	addLight(body, Color3.fromRGB(255, 90, 40), 22, 2)
-	model:PivotTo(CFrame.new(0, 42, 30))
-	return model
 end
 
-local function buildMap()
-	local old = workspace:FindFirstChild("AshenMap")
-	if old then
-		old:Destroy()
-	end
-	local welcome = workspace:FindFirstChild("PRESS_PLAY_F5")
-	if welcome then
-		welcome:Destroy()
-	end
-	local base = workspace:FindFirstChild("Baseplate")
-	if base then
-		base:Destroy()
-	end
-
-	local map = Instance.new("Folder")
-	map.Name = "AshenMap"
-	map.Parent = workspace
-
-	part({
-		Name = "Grass",
-		Parent = map,
-		Size = Vector3.new(520, 4, 520),
-		Position = Vector3.new(0, -2, -20),
-		Color = Color3.fromRGB(78, 112, 68),
-		Material = Enum.Material.Grass,
-	})
-	part({
-		Name = "Snowfield",
-		Parent = map,
-		Size = Vector3.new(520, 4, 180),
-		Position = Vector3.new(0, -1.9, -360),
-		Color = Color3.fromRGB(226, 234, 238),
-		Material = Enum.Material.Snow,
-	})
-
-	-- Pale Wall
-	part({
-		Name = "PaleWallL",
-		Parent = map,
-		Size = Vector3.new(230, 64, 16),
-		Position = Vector3.new(-145, 32, -248),
-		Color = Color3.fromRGB(176, 206, 214),
-		Material = Enum.Material.Glacier,
-	})
-	part({
-		Name = "PaleWallR",
-		Parent = map,
-		Size = Vector3.new(230, 64, 16),
-		Position = Vector3.new(145, 32, -248),
-		Color = Color3.fromRGB(176, 206, 214),
-		Material = Enum.Material.Glacier,
-	})
-	part({
-		Name = "WallLintel",
-		Parent = map,
-		Size = Vector3.new(48, 18, 16),
-		Position = Vector3.new(0, 52, -248),
-		Color = Color3.fromRGB(190, 216, 222),
-		Material = Enum.Material.Glacier,
-	})
-	sign(map, "THE PALE", Vector3.new(0, 18, -228), Color3.fromRGB(40, 60, 70), Vector3.new(16, 4, 0.5))
-
-	-- Cindergate courtyard
-	part({
-		Name = "Courtyard",
-		Parent = map,
-		Size = Vector3.new(92, 1, 78),
-		Position = Vector3.new(0, 0.5, -16),
-		Color = Color3.fromRGB(132, 126, 116),
-		Material = Enum.Material.Cobblestone,
-	})
-
-	local function wall(name, size, position)
+local function makeFern(folder, pos, rng)
+	local model = Instance.new("Model")
+	model.Name = "Fern"
+	model.Parent = folder
+	local fronds = rng:NextInteger(4, 6)
+	for i = 1, fronds do
+		local angle = (i / fronds) * math.pi * 2
 		part({
-			Name = name,
-			Parent = map,
-			Size = size,
-			Position = position,
-			Color = Color3.fromRGB(104, 100, 94),
-			Material = Enum.Material.Slate,
-		})
-	end
-	wall("WallN_L", Vector3.new(34, 16, 3), Vector3.new(-29, 8.5, -54))
-	wall("WallN_R", Vector3.new(34, 16, 3), Vector3.new(29, 8.5, -54))
-	part({
-		Name = "HallDoorLintel",
-		Parent = map,
-		Size = Vector3.new(26, 4, 3),
-		Position = Vector3.new(0, 14.5, -54),
-		Color = Color3.fromRGB(88, 84, 78),
-		Material = Enum.Material.Slate,
-	})
-	wall("WallS_L", Vector3.new(36, 16, 3), Vector3.new(-28, 8.5, 22))
-	wall("WallS_R", Vector3.new(36, 16, 3), Vector3.new(28, 8.5, 22))
-	wall("WallW", Vector3.new(3, 16, 78), Vector3.new(-46, 8.5, -16))
-	wall("WallE", Vector3.new(3, 16, 78), Vector3.new(46, 8.5, -16))
-	part({
-		Name = "GateLintel",
-		Parent = map,
-		Size = Vector3.new(22, 4, 3),
-		Position = Vector3.new(0, 14.5, 22),
-		Color = Color3.fromRGB(88, 84, 78),
-		Material = Enum.Material.Slate,
-	})
-
-	local towerColor = Color3.fromRGB(90, 86, 80)
-	for _, spot in ipairs({
-		Vector3.new(-46, 0, 22),
-		Vector3.new(46, 0, 22),
-		Vector3.new(-46, 0, -54),
-		Vector3.new(46, 0, -54),
-	}) do
-		part({
-			Name = "Tower",
-			Parent = map,
-			Size = Vector3.new(10, 28, 10),
-			Position = spot + Vector3.new(0, 14, 0),
-			Color = towerColor,
-			Material = Enum.Material.Slate,
-		})
-		part({
-			Name = "TowerCap",
-			Parent = map,
-			Size = Vector3.new(12, 3, 12),
-			Position = spot + Vector3.new(0, 29, 0),
-			Color = Color3.fromRGB(120, 36, 40),
-			Material = Enum.Material.Slate,
-		})
-	end
-
-	-- Hall and Cinder Seat
-	local throne = Config.ThronePosition
-	part({
-		Name = "HallFloor",
-		Parent = map,
-		Size = Vector3.new(36, 1, 40),
-		Position = throne + Vector3.new(0, 0.55, 6),
-		Color = Color3.fromRGB(96, 90, 84),
-		Material = Enum.Material.Slate,
-	})
-	part({
-		Name = "Carpet",
-		Parent = map,
-		Size = Vector3.new(6, 0.2, 34),
-		Position = throne + Vector3.new(0, 1.1, 8),
-		Color = Color3.fromRGB(122, 28, 34),
-		Material = Enum.Material.Fabric,
-		CanCollide = false,
-	})
-	wall("HallW", Vector3.new(2, 14, 40), throne + Vector3.new(-18, 8, 6))
-	wall("HallE", Vector3.new(2, 14, 40), throne + Vector3.new(18, 8, 6))
-	wall("HallN", Vector3.new(36, 14, 2), throne + Vector3.new(0, 8, -14))
-	part({
-		Name = "HallRoof",
-		Parent = map,
-		Size = Vector3.new(40, 1.2, 44),
-		Position = throne + Vector3.new(0, 15.2, 6),
-		Color = Color3.fromRGB(62, 42, 40),
-		Material = Enum.Material.Slate,
-	})
-	for i = 1, 4 do
-		part({
-			Name = "Step",
-			Parent = map,
-			Size = Vector3.new(10, 0.6, 3),
-			Position = throne + Vector3.new(0, 1.2 + (i - 1) * 0.45, 8 - (i - 1) * 2.2),
-			Color = Color3.fromRGB(70, 66, 62),
-			Material = Enum.Material.Slate,
-		})
-	end
-	local pad = part({
-		Name = "ThronePad",
-		Parent = map,
-		Size = Vector3.new(8, 1, 8),
-		Position = throne + Vector3.new(0, 3.2, 0),
-		Color = Color3.fromRGB(40, 38, 42),
-		Material = Enum.Material.Basalt,
-	})
-	part({
-		Name = "Seat",
-		Parent = map,
-		Size = Vector3.new(5, 1.2, 3),
-		Position = throne + Vector3.new(0, 4.2, -1.2),
-		Color = Color3.fromRGB(36, 34, 38),
-		Material = Enum.Material.Metal,
-	})
-	part({
-		Name = "SeatBack",
-		Parent = map,
-		Size = Vector3.new(6, 7, 1),
-		Position = throne + Vector3.new(0, 7.2, -2.6),
-		Color = Color3.fromRGB(28, 26, 30),
-		Material = Enum.Material.Metal,
-	})
-	for _, x in ipairs({ -2.2, 2.2 }) do
-		part({
-			Name = "ThroneSpike",
-			Parent = map,
-			Size = Vector3.new(0.35, 3.2, 0.35),
-			CFrame = CFrame.new(throne + Vector3.new(x, 10.2, -2.6)) * CFrame.Angles(0, 0, math.rad(x > 0 and 12 or -12)),
-			Color = Color3.fromRGB(210, 200, 180),
-			Material = Enum.Material.Metal,
+			Name = "Frond",
+			Parent = model,
+			Size = Vector3.new(0.15, 0.08, rng:NextNumber(1.6, 2.8)),
+			Color = Color3.fromRGB(46, 92, 48):Lerp(Color3.fromRGB(80, 120, 60), rng:NextNumber()),
+			Material = Enum.Material.Grass,
 			CanCollide = false,
+			CastShadow = false,
+			CFrame = CFrame.new(pos + Vector3.new(0, 0.4, 0))
+				* CFrame.Angles(math.rad(rng:NextNumber(35, 70)), angle, 0)
+				* CFrame.new(0, 0, -0.8),
 		})
 	end
-	addLight(pad, Color3.fromRGB(255, 150, 70), 20, 1.5)
-	sign(map, "THE CINDER SEAT", throne + Vector3.new(0, 11, 16), Color3.fromRGB(48, 28, 24), Vector3.new(14, 3, 0.4))
+end
 
-	-- Armory + maester inside the yard
-	local smithBench = part({
-		Name = "Armory",
-		Parent = map,
-		Size = Vector3.new(8, 4, 3),
-		Position = Vector3.new(30, 3, -16),
-		Color = Color3.fromRGB(84, 62, 44),
-		Material = Enum.Material.WoodPlanks,
-	})
-	local prompt = Instance.new("ProximityPrompt")
-	prompt.Name = "BuyRune"
-	prompt.ActionText = "Buy Rune Blade"
-	prompt.ObjectText = Config.RuneCost .. " coins"
-	prompt.HoldDuration = 0.4
-	prompt.MaxActivationDistance = 12
-	prompt.Parent = smithBench
-	sign(map, "ARMORY", Vector3.new(30, 7, -12), Color3.fromRGB(70, 48, 32), Vector3.new(8, 2.2, 0.3))
+local function makeRock(folder, pos, rng, scale)
+	local model = Instance.new("Model")
+	model.Name = "Rock"
+	model.Parent = folder
+	local n = rng:NextInteger(2, 4)
+	for i = 1, n do
+		part({
+			Name = "Stone",
+			Parent = model,
+			Size = Vector3.new(rng:NextNumber(2, 6), rng:NextNumber(1.2, 3.4), rng:NextNumber(2, 5)) * scale,
+			Color = Color3.fromRGB(78, 82, 76):Lerp(Color3.fromRGB(48, 62, 50), rng:NextNumber(0, 0.4)),
+			Material = i == 1 and Enum.Material.Rock or Enum.Material.Slate,
+			CanCollide = true,
+			CFrame = CFrame.new(pos + Vector3.new(rng:NextNumber(-1.2, 1.2), rng:NextNumber(0.2, 1.1) * scale, rng:NextNumber(-1.2, 1.2)))
+				* CFrame.Angles(rng:NextNumber(-0.2, 0.2), rng:NextNumber(0, 3), rng:NextNumber(-0.2, 0.2)),
+		})
+	end
+end
 
-	local maester = part({
-		Name = "MaesterStone",
-		Parent = map,
+local function makeLog(folder, pos, rng)
+	local yaw = rng:NextNumber(0, math.pi * 2)
+	local length = rng:NextNumber(8, 16)
+	part({
+		Name = "Log",
+		Parent = folder,
 		Shape = Enum.PartType.Cylinder,
-		Size = Vector3.new(3, 6, 6),
-		CFrame = CFrame.new(-30, 2, -16) * CFrame.Angles(0, 0, math.rad(90)),
-		Color = Color3.fromRGB(150, 148, 140),
-		Material = Enum.Material.Slate,
+		Size = Vector3.new(length, rng:NextNumber(1.1, 1.8), rng:NextNumber(1.1, 1.8)),
+		Color = Color3.fromRGB(58, 46, 34),
+		Material = Enum.Material.Wood,
+		CanCollide = true,
+		CFrame = CFrame.new(pos + Vector3.new(0, 0.8, 0)) * CFrame.Angles(0, yaw, 0) * CFrame.Angles(0, 0, math.rad(90)),
 	})
-	local omen = Instance.new("ProximityPrompt")
-	omen.Name = "Omen"
-	omen.ActionText = "Hear the omen"
-	omen.ObjectText = "Maester Orlen"
-	omen.HoldDuration = 0.2
-	omen.MaxActivationDistance = 12
-	omen.Parent = maester
-
-	sign(map, "CINDERGATE", Vector3.new(0, 10, 30), Color3.fromRGB(54, 40, 36), Vector3.new(18, 4, 0.5))
-
-	-- Lobby yard (safe)
-	part({
-		Name = "LobbyStones",
-		Parent = map,
-		Size = Vector3.new(48, 1, 36),
-		Position = Vector3.new(0, 0.45, 88),
-		Color = Color3.fromRGB(126, 120, 110),
-		Material = Enum.Material.Cobblestone,
-	})
-	sign(map, "SWEAR A HOUSE  THEN MARCH", Vector3.new(0, 10, 70), Color3.fromRGB(40, 36, 32), Vector3.new(18, 3, 0.4))
-
-	for id, campPos in pairs(Config.Camps) do
-		tent(map, campPos, Config.Houses[id].color)
-		local spawn = Instance.new("SpawnLocation")
-		spawn.Name = id .. "Spawn"
-		spawn.Size = Vector3.new(8, 1, 8)
-		spawn.Position = campPos + Vector3.new(0, 1.2, -8)
-		spawn.Anchored = true
-		spawn.Neutral = false
-		spawn.AllowTeamChangeOnTouch = false
-		spawn.TeamColor = BrickColor.new(Config.Houses[id].teamColor)
-		spawn.Duration = 0
-		spawn.Material = Enum.Material.Neon
-		spawn.Color = Config.Houses[id].color
-		spawn.Transparency = 0.35
-		spawn.Parent = map
-	end
-
-	table.clear(banners)
-	for _, info in ipairs(Config.Banners) do
-		local banner = buildBanner(map, info)
-		paintBanner(banner)
-		table.insert(banners, banner)
-	end
-
-	for _, spot in ipairs({
-		Vector3.new(70, 0, -40),
-		Vector3.new(-70, 0, -30),
-		Vector3.new(40, 0, 50),
-		Vector3.new(-50, 0, 130),
-		Vector3.new(170, 0, 20),
-		Vector3.new(-170, 0, -20),
-		Vector3.new(20, 0, -200),
-		Vector3.new(-24, 0, 190),
-		Vector3.new(200, 0, -80),
-		Vector3.new(-190, 0, 100),
-	}) do
-		tree(map, spot)
-	end
-
-	local wyrm = buildWyrm(map)
-
-	omen.Triggered:Connect(function(player)
-		local id = houseIdOf(player)
-		if not id then
-			toast(player, "Swear to a house before you ask the maester for war.")
-			return
-		end
-		toast(player, "Maester Orlen: Hold two banners, then stand upon the Cinder Seat. Three claims wins the realm. The Pale freezes everyone but Frostholm.")
-	end)
-
-	prompt.Triggered:Connect(function(player)
-		if not houseIdOf(player) then
-			toast(player, "The smith will not arm a sworn-less wanderer.")
-			return
-		end
-		if player:GetAttribute("RuneBlade") then
-			toast(player, "You already carry the rune blade.")
-			return
-		end
-		local coins = player:FindFirstChild("leaderstats") and player.leaderstats:FindFirstChild("Coins")
-		if not coins or coins.Value < Config.RuneCost then
-			toast(player, "The smith wants " .. Config.RuneCost .. " coins. You have " .. (coins and coins.Value or 0) .. ".")
-			return
-		end
-		coins.Value -= Config.RuneCost
-		player:SetAttribute("RuneBlade", true)
-		giveSword(player)
-		toast(player, "The rune blade is yours. It bites deeper.")
-		playSound("rbxasset://sounds/unsheath.wav", player.Character, 0.6)
-	end)
-
-	return map, wyrm
 end
 
--- Loadout ----------------------------------------------------------------------
+local function makeMushroom(folder, pos, rng)
+	local stemH = rng:NextNumber(0.4, 0.9)
+	part({
+		Name = "Stem",
+		Parent = folder,
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(stemH, 0.25, 0.25),
+		Color = Color3.fromRGB(214, 206, 186),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		CastShadow = false,
+		CFrame = CFrame.new(pos + Vector3.new(0, stemH * 0.5, 0)) * CFrame.Angles(0, 0, math.rad(90)),
+	})
+	part({
+		Name = "Cap",
+		Parent = folder,
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(0.9, 0.45, 0.9),
+		Color = rng:NextNumber() > 0.7 and Color3.fromRGB(120, 48, 36) or Color3.fromRGB(92, 62, 42),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		CastShadow = false,
+		CFrame = CFrame.new(pos + Vector3.new(0, stemH + 0.15, 0)),
+	})
+end
 
-function giveSword(player)
-	local backpack = player:FindFirstChild("Backpack")
-	local character = player.Character
-	local function strip(container)
-		if not container then
-			return
+local function makeStones(folder, center)
+	for i = 1, 7 do
+		local angle = (i / 7) * math.pi * 2 + 0.2
+		local radius = 16 + (i % 2) * 3
+		local pos = center + Vector3.new(math.cos(angle) * radius, 0, math.sin(angle) * radius)
+		local ground = groundAt(pos.X, pos.Z)
+		if ground then
+			local fallen = i == 3
+			local height = fallen and 7 or (9 + (i % 3) * 2)
+			part({
+				Name = "StandingStone",
+				Parent = folder,
+				Size = Vector3.new(2.2, height, 1.1),
+				Color = Color3.fromRGB(86, 90, 82),
+				Material = Enum.Material.Slate,
+				CanCollide = true,
+				CFrame = CFrame.new(ground + Vector3.new(0, fallen and 0.6 or height * 0.45, 0))
+					* CFrame.Angles(fallen and math.rad(78) or math.rad((i - 4) * 2), angle, 0),
+			})
 		end
-		for _, child in ipairs(container:GetChildren()) do
-			if child:IsA("Tool") then
-				child:Destroy()
+	end
+	part({
+		Name = "Lintel",
+		Parent = folder,
+		Size = Vector3.new(8, 1.2, 1.4),
+		Color = Color3.fromRGB(70, 78, 68),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = CFrame.new(center + Vector3.new(2, 8.5, 4)),
+	})
+end
+
+local function scatter(folder, rng)
+	local trees = Instance.new("Folder")
+	trees.Name = "Trees"
+	trees.Parent = folder
+	local under = Instance.new("Folder")
+	under.Name = "Undergrowth"
+	under.Parent = folder
+	local stones = Instance.new("Folder")
+	stones.Name = "Stones"
+	stones.Parent = folder
+
+	local placed = 0
+	local attempts = 0
+	while placed < 420 and attempts < 2200 do
+		attempts += 1
+		local x = rng:NextNumber(MIN_X + 30, 360)
+		local z = rng:NextNumber(MIN_Z + 30, MAX_Z - 30)
+		local _, _, _, forest, pale = sampleColumn(x, z)
+		if forest > 0.22 and rng:NextNumber() < forest then
+			local pos = groundAt(x, z)
+			if pos and pos.Y > SEA + 1.5 then
+				local kind = "oak"
+				if x > 180 and rng:NextNumber() < 0.45 then
+					kind = "snag"
+				elseif z < -60 and pale > 0.52 and rng:NextNumber() < 0.7 then
+					kind = "pale"
+				elseif rng:NextNumber() > 0.9 then
+					kind = "giant"
+				elseif rng:NextNumber() < 0.07 then
+					kind = "snag"
+				end
+				makeTree(trees, pos, rng, kind)
+				placed += 1
+				if placed % 35 == 0 then
+					task.wait()
+				end
 			end
 		end
 	end
-	strip(backpack)
-	strip(character)
-	if not backpack then
-		return
-	end
 
-	local rune = player:GetAttribute("RuneBlade") == true
-	local tool = Instance.new("Tool")
-	tool.Name = rune and "Rune Blade" or "Longsword"
-	tool.RequiresHandle = true
-	tool.CanBeDropped = false
-	tool.ToolTip = rune and "A heavier cut" or "Click to strike. Hold Q to guard."
-
-	local handle = Instance.new("Part")
-	handle.Name = "Handle"
-	handle.Size = Vector3.new(0.28, 1.15, 0.28)
-	handle.Color = rune and Color3.fromRGB(92, 28, 28) or Color3.fromRGB(92, 64, 42)
-	handle.Material = Enum.Material.WoodPlanks
-	handle.CanCollide = false
-	handle.Parent = tool
-
-	local blade = Instance.new("Part")
-	blade.Name = "Blade"
-	blade.Size = Vector3.new(0.18, 3.5, 0.55)
-	blade.Color = rune and Color3.fromRGB(255, 170, 90) or Color3.fromRGB(214, 220, 228)
-	blade.Material = rune and Enum.Material.Neon or Enum.Material.Metal
-	blade.CanCollide = false
-	blade.Massless = true
-	blade.Parent = tool
-	local weld = Instance.new("Weld")
-	weld.Part0 = handle
-	weld.Part1 = blade
-	weld.C0 = CFrame.new(0, 2.2, 0)
-	weld.Parent = handle
-
-	local guard = Instance.new("Part")
-	guard.Name = "Crossguard"
-	guard.Size = Vector3.new(1.3, 0.18, 0.22)
-	guard.Color = Color3.fromRGB(196, 168, 72)
-	guard.Material = Enum.Material.Metal
-	guard.CanCollide = false
-	guard.Massless = true
-	guard.Parent = tool
-	local weld2 = Instance.new("Weld")
-	weld2.Part0 = handle
-	weld2.Part1 = guard
-	weld2.C0 = CFrame.new(0, 0.7, 0)
-	weld2.Parent = handle
-
-	tool.Grip = CFrame.new(0, -0.4, 0) * CFrame.Angles(math.rad(-90), 0, 0)
-	tool.Parent = backpack
-
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-	if humanoid then
-		humanoid:EquipTool(tool)
-	end
-end
-
-local function applySpeed(player)
-	local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-	if not humanoid then
-		return
-	end
-	local speed = houseIdOf(player) == "Tideholm" and Config.TideholmSpeed or Config.BaseSpeed
-	if player:GetAttribute("Blocking") then
-		speed = 8
-	end
-	humanoid.WalkSpeed = speed
-end
-
-local function awardCoins(player, amount, houseBonus)
-	local stats = player:FindFirstChild("leaderstats")
-	if not stats then
-		return
-	end
-	local coins = stats:FindFirstChild("Coins")
-	if coins then
-		local bonus = 0
-		if houseBonus and houseIdOf(player) == "Goldmere" then
-			bonus = Config.GoldmereBonusCoins
+	for _ = 1, 520 do
+		local x = rng:NextNumber(MIN_X + 20, 340)
+		local z = rng:NextNumber(MIN_Z + 20, MAX_Z - 20)
+		local _, _, _, forest = sampleColumn(x, z)
+		if forest > 0.3 and rng:NextNumber() < forest then
+			local pos = groundAt(x, z)
+			if pos and pos.Y > SEA + 2 then
+				local roll = rng:NextNumber()
+				if roll < 0.62 then
+					makeFern(under, pos, rng)
+				elseif roll < 0.8 then
+					makeMushroom(under, pos, rng)
+				elseif roll < 0.9 then
+					makeRock(stones, pos, rng, rng:NextNumber(0.45, 1))
+				else
+					makeLog(under, pos, rng)
+				end
+			end
 		end
-		coins.Value += amount + bonus
+	end
+
+	-- Cliff rocks and sea stacks.
+	for _ = 1, 40 do
+		local x = rng:NextNumber(240, 470)
+		local z = rng:NextNumber(-400, 400)
+		local pos = groundAt(x, z)
+		if pos then
+			makeRock(stones, pos, rng, rng:NextNumber(1.2, 2.4))
+		else
+			-- Stack rising out of the water.
+			part({
+				Name = "SeaStack",
+				Parent = stones,
+				Size = Vector3.new(rng:NextNumber(6, 14), rng:NextNumber(10, 28), rng:NextNumber(6, 14)),
+				Color = Color3.fromRGB(78, 84, 80),
+				Material = Enum.Material.Rock,
+				CanCollide = true,
+				CFrame = CFrame.new(x, SEA + rng:NextNumber(0, 6), z) * CFrame.Angles(0, rng:NextNumber(0, 3), rng:NextNumber(-0.08, 0.08)),
+			})
+		end
+	end
+
+	local ruinAt = Vector3.new(-8, 0, 70)
+	local ruinGround = groundAt(ruinAt.X, ruinAt.Z)
+	if ruinGround then
+		makeStones(stones, ruinGround)
+	end
+
+	print(string.format("[Drenchwood] %d trees in the rain.", placed))
+end
+
+local function addRain(folder)
+	local rainFolder = Instance.new("Folder")
+	rainFolder.Name = "Rain"
+	rainFolder.Parent = folder
+	for x = -384, 384, 256 do
+		for z = -384, 384, 256 do
+			local volume = part({
+				Name = "RainVolume",
+				Parent = rainFolder,
+				Size = Vector3.new(260, 1, 260),
+				Position = Vector3.new(x, 130, z),
+				Transparency = 1,
+				CanCollide = false,
+				CastShadow = false,
+			})
+			local rain = Instance.new("ParticleEmitter")
+			rain.Name = "Rain"
+			rain.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+			rain.EmissionDirection = Enum.NormalId.Bottom
+			rain.Rate = 180
+			rain.Lifetime = NumberRange.new(0.7, 1.15)
+			rain.Speed = NumberRange.new(48, 70)
+			rain.Acceleration = Vector3.new(6, -30, 2)
+			rain.SpreadAngle = Vector2.new(4, 4)
+			rain.LightEmission = 0.35
+			rain.LightInfluence = 0.4
+			rain.Size = NumberSequence.new(0.12)
+			rain.Squash = NumberSequence.new(7)
+			rain.Transparency = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 0.35),
+				NumberSequenceKeypoint.new(1, 0.7),
+			})
+			rain.Color = ColorSequence.new(Color3.fromRGB(210, 220, 216))
+			rain.Parent = volume
+
+			local mist = Instance.new("ParticleEmitter")
+			mist.Name = "Mist"
+			mist.Texture = "rbxasset://textures/particles/smoke_main.dds"
+			mist.Rate = 6
+			mist.Lifetime = NumberRange.new(8, 14)
+			mist.Speed = NumberRange.new(0.4, 1.2)
+			mist.Rotation = NumberRange.new(0, 360)
+			mist.RotSpeed = NumberRange.new(-8, 8)
+			mist.Size = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 18),
+				NumberSequenceKeypoint.new(1, 40),
+			})
+			mist.Transparency = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 0.75),
+				NumberSequenceKeypoint.new(0.5, 0.88),
+				NumberSequenceKeypoint.new(1, 1),
+			})
+			mist.Color = ColorSequence.new(Color3.fromRGB(186, 196, 188))
+			mist.LightEmission = 0.05
+			mist.Parent = volume
+		end
 	end
 end
 
-local function noteKill(player)
-	local stats = player:FindFirstChild("leaderstats")
-	local kills = stats and stats:FindFirstChild("Kills")
-	if kills then
-		kills.Value += 1
+local function addSpawn(folder)
+	local x, z = -420, -24
+	local pos = groundAt(x, z)
+	if not pos then
+		pos = Vector3.new(x, 70, z)
 	end
+	local pad = part({
+		Name = "Lookout",
+		Parent = folder,
+		Size = Vector3.new(18, 1.2, 14),
+		Color = Color3.fromRGB(70, 74, 68),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = CFrame.new(pos + Vector3.new(0, 0.4, 0)),
+	})
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "LookoutSpawn"
+	spawn.Size = Vector3.new(8, 1, 8)
+	spawn.Anchored = true
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.CanCollide = true
+	spawn.Material = Enum.Material.Slate
+	spawn.Color = Color3.fromRGB(62, 68, 60)
+	spawn.Transparency = 1
+	spawn.CFrame = pad.CFrame + Vector3.new(0, 2, 0)
+	spawn.Parent = folder
+
+	-- A low mossy bench of stone, so the overlook reads as a place to stand.
+	part({
+		Name = "SeatStone",
+		Parent = folder,
+		Size = Vector3.new(6, 1.4, 2),
+		Color = Color3.fromRGB(64, 74, 62),
+		Material = Enum.Material.Slate,
+		CanCollide = true,
+		CFrame = pad.CFrame * CFrame.new(0, 1.2, 4),
+	})
 end
 
-local function onHumanoidDied(humanoid, victimPlayer)
-	local attackerId = humanoid:GetAttribute("LastAttacker")
-	if typeof(attackerId) ~= "number" or attackerId <= 0 then
-		return
-	end
-	local attacker = Players:GetPlayerByUserId(attackerId)
-	if not attacker or attacker == victimPlayer then
-		return
-	end
-	noteKill(attacker)
-	awardCoins(attacker, victimPlayer and Config.PlayerKillCoins or Config.RaiderKillCoins, true)
-	local victimName = victimPlayer and victimPlayer.DisplayName or "Ash Marauder"
-	toastAll(attacker.DisplayName .. " felled " .. victimName)
+function MapBuilder.isBuilt()
+	return workspace:FindFirstChild("Drenchwood") ~= nil
 end
 
-local function setupCharacter(player, character)
-	local humanoid = character:WaitForChild("Humanoid", 8)
-	local root = character:WaitForChild("HumanoidRootPart", 8)
-	if not humanoid or not root then
-		return
+function MapBuilder.build()
+	if workspace:FindFirstChild("Drenchwood") or workspace:FindFirstChild("DrenchwoodLock") then
+		return false
 	end
-	player:SetAttribute("Blocking", false)
-	humanoid.MaxHealth = 100
-	humanoid.Health = 100
-	humanoid.DisplayName = player.DisplayName
-	applySpeed(player)
+	local lock = Instance.new("Folder")
+	lock.Name = "DrenchwoodLock"
+	lock.Parent = workspace
 
-	local shield = Instance.new("ForceField")
-	shield.Visible = true
-	shield.Parent = character
-	Debris:AddItem(shield, Config.SpawnShield)
-
-	if houseIdOf(player) then
-		giveSword(player)
+	local baseplate = workspace:FindFirstChild("Baseplate")
+	if baseplate then
+		baseplate:Destroy()
+	end
+	local oldWelcome = workspace:FindFirstChild("PRESS_PLAY_F5")
+	if oldWelcome then
+		oldWelcome:Destroy()
 	end
 
-	humanoid.Died:Connect(function()
-		player:SetAttribute("Blocking", false)
-		onHumanoidDied(humanoid, player)
+	print("[Drenchwood] Growing the forest. This takes a little while. Then File > Save.")
+
+	local ok, err = pcall(function()
+		workspace.StreamingEnabled = false
+		workspace.FallenPartsDestroyHeight = -300
+		writeTerrain()
+
+		local root = Instance.new("Folder")
+		root.Name = "Drenchwood"
+		root.Parent = workspace
+
+		local rng = Random.new(SEED)
+		scatter(root, rng)
+		addRain(root)
+		addSpawn(root)
 	end)
-end
 
-local function ensureStats(player)
-	if player:FindFirstChild("leaderstats") then
-		return
-	end
-	local stats = Instance.new("Folder")
-	stats.Name = "leaderstats"
-	local coins = Instance.new("IntValue")
-	coins.Name = "Coins"
-	coins.Parent = stats
-	local kills = Instance.new("IntValue")
-	kills.Name = "Kills"
-	kills.Parent = stats
-	local claimStat = Instance.new("IntValue")
-	claimStat.Name = "Claims"
-	claimStat.Parent = stats
-	stats.Parent = player
-end
-
--- Combat -----------------------------------------------------------------------
-
-local function swordDamageFor(player)
-	local amount = player:GetAttribute("RuneBlade") and Config.RuneDamage or Config.SwordDamage
-	if houseIdOf(player) == "Wyrmreach" then
-		amount = math.floor(amount * 1.15)
-	end
-	if houseIdOf(player) == "Frostholm" then
-		local clock = Lighting.ClockTime
-		if clock >= 18 or clock < 6 then
-			amount = math.floor(amount * Config.FrostholmNightBonus)
+	if not ok then
+		warn("[Drenchwood] The forest failed to grow: " .. tostring(err))
+		local partial = workspace:FindFirstChild("Drenchwood")
+		if partial then
+			partial:Destroy()
 		end
+		lock:Destroy()
+		return false
 	end
-	return amount
-end
 
-local function tryHit(origin, look, targetRoot, targetHumanoid, amount, attackerPlayer)
-	if not targetRoot or not targetHumanoid or targetHumanoid.Health <= 0 then
-		return false
-	end
-	local delta = targetRoot.Position - origin
-	if math.abs(delta.Y) > 7 then
-		return false
-	end
-	local flat = Vector3.new(delta.X, 0, delta.Z)
-	if flat.Magnitude > Config.SwordRange or flat.Magnitude < 0.05 then
-		return false
-	end
-	local flatLook = Vector3.new(look.X, 0, look.Z)
-	if flatLook.Magnitude < 0.05 then
-		return false
-	end
-	if flat.Unit:Dot(flatLook.Unit) < 0.25 then
-		return false
-	end
-	if Config.inSafe(origin) or Config.inSafe(targetRoot.Position) then
-		return false
-	end
-	local taken = amount
-	local targetPlayer = Players:GetPlayerFromCharacter(targetHumanoid.Parent)
-	if targetPlayer and targetPlayer:GetAttribute("Blocking") then
-		local theirLook = targetRoot.CFrame.LookVector
-		local face = Vector3.new(theirLook.X, 0, theirLook.Z)
-		if face.Magnitude > 0.05 and face.Unit:Dot((-flat).Unit) > 0.15 then
-			taken = math.max(1, math.floor(amount * 0.28))
-		end
-	end
-	targetHumanoid:SetAttribute("LastAttacker", attackerPlayer.UserId)
-	targetHumanoid:TakeDamage(taken)
-	HitFx:FireAllClients(targetRoot.Position + Vector3.new(0, 2, 0), taken)
+	print("[Drenchwood] Done. West ridge is the lookout. The sea is east. Rain does not stop.")
 	return true
 end
 
-Swing.OnServerEvent:Connect(function(player)
-	if not roundLive then
+function MapBuilder.startAmbience()
+	if SoundService:FindFirstChild("DrenchRain") then
 		return
 	end
-	if not houseIdOf(player) then
-		return
-	end
-	local now = os.clock()
-	if lastSwing[player] and now - lastSwing[player] < Config.SwordCooldown then
-		return
-	end
-	local character = player.Character
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-	local root = character and character:FindFirstChild("HumanoidRootPart")
-	if not humanoid or not root or humanoid.Health <= 0 then
-		return
-	end
-	lastSwing[player] = now
-	playSound("rbxasset://sounds/swordslash.wav", root, 0.45)
-	local amount = swordDamageFor(player)
-	local origin = root.Position
-	local look = root.CFrame.LookVector
+	local rain = Instance.new("Sound")
+	rain.Name = "DrenchRain"
+	rain.SoundId = "rbxassetid://138191657"
+	rain.Looped = true
+	rain.Volume = 0.42
+	rain.Parent = SoundService
+	rain:Play()
 
-	for _, other in ipairs(Players:GetPlayers()) do
-		if other ~= player and other.Team ~= player.Team then
-			local otherCharacter = other.Character
-			local otherHumanoid = otherCharacter and otherCharacter:FindFirstChildOfClass("Humanoid")
-			local otherRoot = otherCharacter and otherCharacter:FindFirstChild("HumanoidRootPart")
-			tryHit(origin, look, otherRoot, otherHumanoid, amount, player)
-		end
-	end
-
-	local raiders = workspace:FindFirstChild("AshRaiders")
-	if raiders then
-		for _, model in ipairs(raiders:GetChildren()) do
-			local otherHumanoid = model:FindFirstChildOfClass("Humanoid")
-			local otherRoot = model:FindFirstChild("HumanoidRootPart")
-			tryHit(origin, look, otherRoot, otherHumanoid, amount, player)
-		end
-	end
-end)
-
-Block.OnServerEvent:Connect(function(player, isBlocking)
-	if typeof(isBlocking) ~= "boolean" then
-		return
-	end
-	if not houseIdOf(player) then
-		return
-	end
-	player:SetAttribute("Blocking", isBlocking)
-	applySpeed(player)
-end)
-
--- Round ------------------------------------------------------------------------
-
-local function resetRound()
-	for _, id in ipairs(Config.HouseOrder) do
-		claims[id] = 0
-	end
-	for _, banner in ipairs(banners) do
-		banner.owner = nil
-		banner.progress = 0
-		banner.progressHouse = nil
-		paintBanner(banner)
-	end
-	throneProgress = 0
-	throneHouse = ""
-	roundLive = true
-	roundEndsAt = workspace:GetServerTimeNow() + Config.RoundLength
-	matchFolder:SetAttribute("Winner", "")
-	syncState()
-	for _, player in ipairs(Players:GetPlayers()) do
-		if houseIdOf(player) then
-			player:LoadCharacter()
-		end
-	end
-end
-
-local function endRound(winnerId, reason)
-	if not roundLive then
-		return
-	end
-	roundLive = false
-	local house = winnerId and Config.Houses[winnerId]
-	matchFolder:SetAttribute("Winner", winnerId or "")
-	syncState()
-	toastAll(reason)
-	if house then
-		playSound("rbxasset://sounds/victory.wav", workspace, 0.7)
-	end
-	task.delay(Config.Intermission, function()
-		resetRound()
-		toastAll("A new war begins. Banners are unclaimed. The Cinder Seat is empty.")
-	end)
-end
-
-local function addClaim(id, player)
-	claims[id] = (claims[id] or 0) + 1
-	local stats = player:FindFirstChild("leaderstats")
-	local claimStat = stats and stats:FindFirstChild("Claims")
-	if claimStat then
-		claimStat.Value += 1
-	end
-	awardCoins(player, Config.ClaimCoins)
-	toastAll(Config.Houses[id].name .. " claimed the Cinder Seat (" .. claims[id] .. "/" .. Config.ClaimsToWin .. ")")
-	if claims[id] >= Config.ClaimsToWin then
-		endRound(id, Config.Houses[id].name .. " holds the realm.")
-	end
-end
-
-local function updateBanners(dt)
-	for _, banner in ipairs(banners) do
-		local present = {}
-		local count = 0
-		for _, player in ipairs(Players:GetPlayers()) do
-			local id = houseIdOf(player)
-			local character = player.Character
-			local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-			local root = character and character:FindFirstChild("HumanoidRootPart")
-			if id and humanoid and root and humanoid.Health > 0 then
-				local offset = root.Position - banner.position
-				local flat = Vector3.new(offset.X, 0, offset.Z)
-				if flat.Magnitude <= 14 and math.abs(offset.Y) < 12 then
-					present[id] = (present[id] or 0) + 1
-					count += 1
-				end
-			end
-		end
-		local housesHere = 0
-		local only = nil
-		for id in pairs(present) do
-			housesHere += 1
-			only = id
-		end
-		if housesHere == 1 and only ~= banner.owner then
-			if banner.progressHouse ~= only then
-				banner.progressHouse = only
-				banner.progress = 0
-			end
-			local speed = 1 + math.max(0, (present[only] or 1) - 1) * 0.4
-			banner.progress += dt * speed
-			if banner.progress >= Config.BannerCaptureTime then
-				banner.owner = only
-				banner.progress = 0
-				paintBanner(banner)
-				toastAll(Config.Houses[only].name .. " raised the " .. banner.label .. ".")
-			end
-		elseif housesHere == 0 then
-			if banner.progress > 0 then
-				banner.progress = math.max(0, banner.progress - dt * 0.8)
-			end
-		else
-			banner.progress = math.max(0, banner.progress - dt)
-		end
-		local ratio = math.clamp(banner.progress / Config.BannerCaptureTime, 0, 1)
-		banner.ring.Transparency = 0.45 - ratio * 0.3
-	end
-end
-
-local function updateThrone(dt)
-	local padPos = Config.ThronePosition + Vector3.new(0, 4, 0)
-	local present = {}
-	local claimer = nil
-	for _, player in ipairs(Players:GetPlayers()) do
-		local id = houseIdOf(player)
-		local character = player.Character
-		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-		local root = character and character:FindFirstChild("HumanoidRootPart")
-		if id and humanoid and root and humanoid.Health > 0 then
-			local offset = root.Position - padPos
-			local flat = Vector3.new(offset.X, 0, offset.Z)
-			if flat.Magnitude <= 7 and math.abs(offset.Y) < 8 then
-				present[id] = player
-			end
-		end
-	end
-	local housesHere = 0
-	local only = nil
-	for id, player in pairs(present) do
-		housesHere += 1
-		only = id
-		claimer = player
-	end
-	local now = workspace:GetServerTimeNow()
-	if housesHere == 1 and bannerCount(only) >= Config.ThroneBannersNeeded and now >= throneLockUntil then
-		if throneHouse ~= only then
-			throneHouse = only
-			throneProgress = 0
-		end
-		throneProgress += dt / Config.ThroneChannelTime
-		if throneProgress >= 1 and claimer then
-			throneProgress = 0
-			throneLockUntil = now + 12
-			addClaim(only, claimer)
-		end
-	else
-		if housesHere == 1 and only and bannerCount(only) < Config.ThroneBannersNeeded then
-			throneHouse = only
-		elseif housesHere ~= 1 then
-			throneHouse = ""
-		end
-		throneProgress = math.max(0, throneProgress - dt / 2)
-	end
-end
-
-local function environmentTick()
-	for _, player in ipairs(Players:GetPlayers()) do
-		local character = player.Character
-		local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-		local root = character and character:FindFirstChild("HumanoidRootPart")
-		if humanoid and root and humanoid.Health > 0 and root.Position.Z < Config.ColdZ then
-			if houseIdOf(player) == "Frostholm" then
-				humanoid.Health = math.min(humanoid.MaxHealth, humanoid.Health + 4)
-			elseif not Config.inSafe(root.Position) then
-				humanoid:TakeDamage(Config.ColdDamage)
-			end
-		end
-	end
-end
-
--- Raiders ----------------------------------------------------------------------
-
-local function spawnRaider(position, folder)
-	local description = Instance.new("HumanoidDescription")
-	description.HeadColor = Color3.fromRGB(168, 166, 160)
-	description.TorsoColor = Color3.fromRGB(48, 44, 42)
-	description.LeftArmColor = Color3.fromRGB(62, 56, 52)
-	description.RightArmColor = Color3.fromRGB(62, 56, 52)
-	description.LeftLegColor = Color3.fromRGB(32, 30, 30)
-	description.RightLegColor = Color3.fromRGB(32, 30, 30)
-
-	local ok, model = pcall(function()
-		return Players:CreateHumanoidModelFromDescription(description, Enum.HumanoidRigType.R15)
-	end)
-	description:Destroy()
-	if not ok or typeof(model) ~= "Instance" then
-		warn("[Ashen Realm] Marauder rig failed: " .. tostring(model))
-		return nil
-	end
-
-	model.Name = "AshMarauder"
-	model.Parent = folder
-	local humanoid = model:FindFirstChildOfClass("Humanoid")
-	local hrp = model:FindFirstChild("HumanoidRootPart")
-	if not humanoid or not hrp then
-		model:Destroy()
-		return nil
-	end
-	humanoid.MaxHealth = 80
-	humanoid.Health = 80
-	humanoid.WalkSpeed = 12
-	humanoid.DisplayName = "Ash Marauder"
-	humanoid.NameDisplayDistance = 80
-	humanoid.HealthDisplayType = Enum.HumanoidHealthDisplayType.DisplayWhenDamaged
-	model:PivotTo(CFrame.new(position + Vector3.new(0, 4, 0)))
-	pcall(function()
-		hrp:SetNetworkOwner(nil)
-	end)
-
-	local path = PathfindingService:CreatePath({
-		AgentRadius = 2,
-		AgentHeight = 5,
-		AgentCanJump = true,
-	})
-	local nextHit = 0
-
-	humanoid.Died:Connect(function()
-		onHumanoidDied(humanoid, nil)
-		task.delay(8, function()
-			if model.Parent then
-				model:Destroy()
-			end
-			if folder.Parent then
-				spawnRaider(position, folder)
-			end
-		end)
-	end)
+	local thunder = Instance.new("Sound")
+	thunder.Name = "DrenchThunder"
+	thunder.SoundId = "rbxassetid://138186576"
+	thunder.Volume = 0.55
+	thunder.Parent = SoundService
 
 	task.spawn(function()
-		while model.Parent and humanoid.Health > 0 do
-			local bestRoot = nil
-			local bestDist = 170
-			for _, player in ipairs(Players:GetPlayers()) do
-				local character = player.Character
-				local otherHumanoid = character and character:FindFirstChildOfClass("Humanoid")
-				local otherRoot = character and character:FindFirstChild("HumanoidRootPart")
-				if otherHumanoid and otherRoot and otherHumanoid.Health > 0 and not Config.inSafe(otherRoot.Position) then
-					local dist = (otherRoot.Position - hrp.Position).Magnitude
-					if dist < bestDist then
-						bestDist = dist
-						bestRoot = otherRoot
-					end
+		local rng = Random.new(SEED + 3)
+		while rain.Parent do
+			task.wait(rng:NextNumber(22, 48))
+			if not rain.Parent then
+				break
+			end
+			local grade = Lighting:FindFirstChild("DrenchGrade")
+			thunder.TimePosition = 0
+			thunder:Play()
+			if grade then
+				local previous = grade.Brightness
+				grade.Brightness = 0.22
+				task.wait(0.08)
+				if grade.Parent then
+					grade.Brightness = previous
 				end
-			end
-			if bestRoot and bestDist < 7 then
-				local now = os.clock()
-				if now >= nextHit then
-					nextHit = now + 1.15
-					local victimHumanoid = bestRoot.Parent:FindFirstChildOfClass("Humanoid")
-					if victimHumanoid and roundLive then
-						victimHumanoid:SetAttribute("LastAttacker", 0)
-						victimHumanoid:TakeDamage(13)
-						HitFx:FireAllClients(bestRoot.Position + Vector3.new(0, 2, 0), 13)
-					end
+				task.wait(rng:NextNumber(0.35, 0.7))
+				if grade.Parent then
+					grade.Brightness = 0.08
+					task.wait(0.05)
+					grade.Brightness = previous
 				end
-				humanoid:MoveTo(bestRoot.Position)
-			elseif bestRoot then
-				local goal = bestRoot.Position
-				local computed = pcall(function()
-					path:ComputeAsync(hrp.Position, goal)
-				end)
-				if computed and path.Status == Enum.PathStatus.Success then
-					local waypoints = path:GetWaypoints()
-					local step = waypoints[2] or waypoints[1]
-					if step then
-						humanoid:MoveTo(step.Position)
-					end
-				else
-					humanoid:MoveTo(goal)
-				end
-			else
-				humanoid:MoveTo(position + Vector3.new(math.random(-18, 18), 0, math.random(-18, 18)))
-			end
-			task.wait(0.7)
-		end
-	end)
-
-	return model
-end
-
--- Dragonfire -------------------------------------------------------------------
-
-local function dragonLoop(wyrm)
-	local angle = 0
-	RunService.Heartbeat:Connect(function(dt)
-		if not wyrm.Parent then
-			return
-		end
-		angle += dt * 0.28
-		local x = math.cos(angle) * 110
-		local z = math.sin(angle) * 80 + 10
-		local y = 40 + math.sin(angle * 2) * 5
-		wyrm:PivotTo(CFrame.new(x, y, z) * CFrame.Angles(0, -angle + math.rad(90), math.rad(-10)))
-	end)
-
-	task.spawn(function()
-		while wyrm.Parent do
-			task.wait(24)
-			if not roundLive then
-				continue
-			end
-			local candidates = {}
-			for _, player in ipairs(Players:GetPlayers()) do
-				if houseIdOf(player) and houseIdOf(player) ~= "Wyrmreach" then
-					local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-					local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-					if root and humanoid and humanoid.Health > 0 and not Config.inSafe(root.Position) then
-						table.insert(candidates, root)
-					end
-				end
-			end
-			local pos
-			if #candidates > 0 then
-				pos = candidates[math.random(#candidates)].Position
-			else
-				pos = Vector3.new(math.random(-70, 70), 0, math.random(-30, 90))
-			end
-			local zone = part({
-				Name = "Dragonfire",
-				Parent = workspace.AshenMap,
-				Shape = Enum.PartType.Cylinder,
-				Size = Vector3.new(1.2, 30, 30),
-				CFrame = CFrame.new(pos.X, 1.2, pos.Z) * CFrame.Angles(0, 0, math.rad(90)),
-				Color = Color3.fromRGB(255, 210, 80),
-				Material = Enum.Material.Neon,
-				CanCollide = false,
-				Transparency = 0.45,
-			})
-			toastAll("The ash wyrm dives. Leave the gold ring.")
-			task.wait(1.6)
-			if zone.Parent then
-				zone.Color = Color3.fromRGB(255, 80, 30)
-				zone.Transparency = 0.25
-			end
-			local started = os.clock()
-			while os.clock() - started < 2.6 and zone.Parent and roundLive do
-				for _, player in ipairs(Players:GetPlayers()) do
-					if houseIdOf(player) ~= "Wyrmreach" then
-						local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-						local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-						if root and humanoid and humanoid.Health > 0 then
-							local flat = Vector3.new(root.Position.X - pos.X, 0, root.Position.Z - pos.Z)
-							if flat.Magnitude <= 16 and not Config.inSafe(root.Position) then
-								humanoid:TakeDamage(10)
-							end
-						end
-					end
-				end
-				local raiders = workspace:FindFirstChild("AshRaiders")
-				if raiders then
-					for _, model in ipairs(raiders:GetChildren()) do
-						local root = model:FindFirstChild("HumanoidRootPart")
-						local humanoid = model:FindFirstChildOfClass("Humanoid")
-						if root and humanoid and humanoid.Health > 0 then
-							local flat = Vector3.new(root.Position.X - pos.X, 0, root.Position.Z - pos.Z)
-							if flat.Magnitude <= 16 then
-								humanoid:TakeDamage(14)
-							end
-						end
-					end
-				end
-				task.wait(0.45)
-			end
-			if zone.Parent then
-				zone:Destroy()
 			end
 		end
 	end)
 end
 
--- Players ----------------------------------------------------------------------
-
-local function onPlayerAdded(player)
-	ensureStats(player)
-	player:SetAttribute("Blocking", false)
-	player.CharacterAdded:Connect(function(character)
-		setupCharacter(player, character)
-	end)
-end
-
-ChooseHouse.OnServerEvent:Connect(function(player, houseId)
-	if typeof(houseId) ~= "string" or not Config.Houses[houseId] then
-		return
-	end
-	if houseIdOf(player) or choosing[player] then
-		return
-	end
-	choosing[player] = true
-	local team = teamsById[houseId]
-	player.Team = team
-	player:SetAttribute("HouseId", houseId)
-	toast(player, "You are sworn to " .. Config.Houses[houseId].name .. ". " .. Config.Houses[houseId].motto)
-	toastAll(player.DisplayName .. " swore to " .. Config.Houses[houseId].name .. ".")
-	player:LoadCharacter()
-end)
-
-Players.PlayerAdded:Connect(onPlayerAdded)
-for _, player in ipairs(Players:GetPlayers()) do
-	onPlayerAdded(player)
-end
-
-Players.PlayerRemoving:Connect(function(player)
-	lastSwing[player] = nil
-	choosing[player] = nil
-end)
-
--- World start ------------------------------------------------------------------
-
-Lighting.ClockTime = 17.4
-Lighting.Brightness = 2.1
-Lighting.Ambient = Color3.fromRGB(78, 82, 96)
-Lighting.OutdoorAmbient = Color3.fromRGB(128, 132, 142)
-Lighting.FogColor = Color3.fromRGB(168, 176, 186)
-Lighting.FogStart = 160
-Lighting.FogEnd = 760
-Lighting.GlobalShadows = true
-if not Lighting:FindFirstChildOfClass("Atmosphere") then
-	local atmosphere = Instance.new("Atmosphere")
-	atmosphere.Density = 0.32
-	atmosphere.Offset = 0.15
-	atmosphere.Color = Color3.fromRGB(190, 198, 206)
-	atmosphere.Decay = Color3.fromRGB(120, 110, 100)
-	atmosphere.Glare = 0.15
-	atmosphere.Haze = 1.2
-	atmosphere.Parent = Lighting
-end
-
-local _, wyrm = buildMap()
-
-local raiderFolder = workspace:FindFirstChild("AshRaiders")
-if raiderFolder then
-	raiderFolder:Destroy()
-end
-raiderFolder = Instance.new("Folder")
-raiderFolder.Name = "AshRaiders"
-raiderFolder.Parent = workspace
-for _, spot in ipairs(Config.RaiderSpawns) do
-	spawnRaider(spot, raiderFolder)
-end
-
-roundEndsAt = workspace:GetServerTimeNow() + Config.RoundLength
-matchFolder:SetAttribute("Winner", "")
-syncState()
-dragonLoop(wyrm)
-
-local bannerTick = 0
-local coldTick = 0
-RunService.Heartbeat:Connect(function(dt)
-	dt = math.min(dt, 0.1)
-	Lighting.ClockTime = (Lighting.ClockTime + dt * 0.045) % 24
-	if not roundLive then
-		return
-	end
-	bannerTick += dt
-	coldTick += dt
-	if bannerTick >= 0.25 then
-		local step = bannerTick
-		bannerTick = 0
-		updateBanners(step)
-		updateThrone(step)
-		syncState()
-		if workspace:GetServerTimeNow() >= roundEndsAt then
-			local bestId = nil
-			local bestClaims = -1
-			local tie = false
-			for _, id in ipairs(Config.HouseOrder) do
-				local n = claims[id] or 0
-				if n > bestClaims then
-					bestClaims = n
-					bestId = id
-					tie = false
-				elseif n == bestClaims then
-					tie = true
-				end
-			end
-			if bestClaims <= 0 or tie then
-				endRound(nil, "The horn sounds. No house held the Cinder Seat. The war begins again.")
-			else
-				endRound(bestId, "Time. " .. Config.Houses[bestId].name .. " kept the seat.")
-			end
-		end
-	end
-	if coldTick >= 1 then
-		coldTick = 0
-		environmentTick()
-	end
-end)
-
-print("[Ashen Realm] The Cinder Seat is empty. Four houses remain.")
+-- Keep a stable reference so the module always returns the builder.
+return MapBuilder
 ]]></ProtectedString></Properties>
 </Item>
 </Item>
-
-<Item class="StarterPlayer" referent="RBX00000000000000000000000000000009">
+<Item class="ServerScriptService" referent="RBX00000000000000000000000000000005">
 <Properties>
-<string name="Name">StarterPlayer</string></Properties>
-<Item class="StarterPlayerScripts" referent="RBX00000000000000000000000000000008">
+<string name="Name">ServerScriptService</string></Properties>
+<Item class="Script" referent="RBX00000000000000000000000000000002">
+<Properties>
+<string name="Name">BuildInStudio</string><ProtectedString name="Source"><![CDATA[-- Runs when the place is opened in Studio, so the forest exists before you press Play.
+local RunService = game:GetService("RunService")
+if not RunService:IsStudio() then
+	return
+end
+
+local builder = require(game:GetService("ReplicatedStorage"):WaitForChild("MapBuilder"))
+builder.build()
+]]></ProtectedString><token name="RunContext">3</token></Properties>
+</Item>
+<Item class="Script" referent="RBX00000000000000000000000000000003">
+<Properties>
+<string name="Name">BuildOnServer</string><ProtectedString name="Source"><![CDATA[-- If the forest was not saved from Studio yet, grow it when the server starts.
+local builder = require(game:GetService("ReplicatedStorage"):WaitForChild("MapBuilder"))
+builder.build()
+builder.startAmbience()
+]]></ProtectedString><token name="RunContext">1</token></Properties>
+</Item>
+</Item>
+<Item class="StarterPlayer" referent="RBX00000000000000000000000000000007">
+<Properties>
+<string name="Name">StarterPlayer</string><float name="CameraMaxZoomDistance">80</float><float name="CameraMinZoomDistance">8</float></Properties>
+<Item class="StarterPlayerScripts" referent="RBX00000000000000000000000000000006">
 <Properties>
 <string name="Name">StarterPlayerScripts</string></Properties>
-<Item class="LocalScript" referent="RBX00000000000000000000000000000007">
-<Properties>
-<string name="Name">AshenClient</string><ProtectedString name="Source"><![CDATA[-- Ashen Realm client. House oath, HUD, sword input, minimap.
-
-local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
-local Lighting = game:GetService("Lighting")
-local TweenService = game:GetService("TweenService")
-
-local player = Players.LocalPlayer
-local Config = require(ReplicatedStorage:WaitForChild("AshenConfig"))
-local remotes = ReplicatedStorage:WaitForChild("AshenRemotes")
-local matchFolder = ReplicatedStorage:WaitForChild("AshenMatch")
-local ChooseHouse = remotes:WaitForChild("ChooseHouse")
-local Swing = remotes:WaitForChild("Swing")
-local Block = remotes:WaitForChild("Block")
-local Toast = remotes:WaitForChild("Toast")
-local HitFx = remotes:WaitForChild("HitFx")
-
-player.CameraMaxZoomDistance = 48
-player.CameraMinZoomDistance = 8
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "AshenRealm"
-gui.ResetOnSpawn = false
-gui.IgnoreGuiInset = true
-gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-gui.Parent = player:WaitForChild("PlayerGui")
-
-local function corner(parent, radius)
-	local c = Instance.new("UICorner")
-	c.CornerRadius = UDim.new(0, radius or 8)
-	c.Parent = parent
-	return c
-end
-
-local function stroke(parent, color, thickness)
-	local s = Instance.new("UIStroke")
-	s.Color = color or Color3.fromRGB(220, 200, 160)
-	s.Thickness = thickness or 1
-	s.Transparency = 0.25
-	s.Parent = parent
-	return s
-end
-
--- Oath screen ------------------------------------------------------------------
-
-local picker = Instance.new("Frame")
-picker.Name = "Oath"
-picker.Size = UDim2.fromScale(1, 1)
-picker.BackgroundColor3 = Color3.fromRGB(10, 12, 16)
-picker.BackgroundTransparency = 0.12
-picker.BorderSizePixel = 0
-picker.Parent = gui
-
-local veil = Instance.new("Frame")
-veil.Size = UDim2.fromScale(1, 1)
-veil.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
-veil.BackgroundTransparency = 0.35
-veil.BorderSizePixel = 0
-veil.Parent = picker
-
-local title = Instance.new("TextLabel")
-title.BackgroundTransparency = 1
-title.Position = UDim2.fromScale(0.08, 0.05)
-title.Size = UDim2.fromScale(0.84, 0.09)
-title.Font = Enum.Font.Garamond
-title.Text = "ASHEN REALM"
-title.TextColor3 = Color3.fromRGB(236, 220, 186)
-title.TextScaled = true
-title.Parent = picker
-
-local sub = Instance.new("TextLabel")
-sub.BackgroundTransparency = 1
-sub.Position = UDim2.fromScale(0.12, 0.145)
-sub.Size = UDim2.fromScale(0.76, 0.06)
-sub.Font = Enum.Font.Gotham
-sub.Text = "The Cinder Seat is empty. Four houses remain. Swear, then take it."
-sub.TextColor3 = Color3.fromRGB(186, 186, 196)
-sub.TextScaled = true
-sub.Parent = picker
-
-local row = Instance.new("Frame")
-row.BackgroundTransparency = 1
-row.Position = UDim2.fromScale(0.04, 0.24)
-row.Size = UDim2.fromScale(0.92, 0.58)
-row.Parent = picker
-
-local layout = Instance.new("UIListLayout")
-layout.FillDirection = Enum.FillDirection.Horizontal
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-layout.VerticalAlignment = Enum.VerticalAlignment.Center
-layout.Padding = UDim.new(0.015, 0)
-layout.Parent = row
-
-local controls = Instance.new("TextLabel")
-controls.BackgroundTransparency = 1
-controls.Position = UDim2.fromScale(0.1, 0.86)
-controls.Size = UDim2.fromScale(0.8, 0.08)
-controls.Font = Enum.Font.Gotham
-controls.Text = "Click to strike    ·    Hold Q to guard    ·    Stand in a ring to raise a banner    ·    Two banners, then the throne"
-controls.TextColor3 = Color3.fromRGB(160, 160, 170)
-controls.TextScaled = true
-controls.Parent = picker
-
-local busy = false
-
-for _, id in ipairs(Config.HouseOrder) do
-	local house = Config.Houses[id]
-	local card = Instance.new("TextButton")
-	card.Name = id
-	card.AutoButtonColor = true
-	card.Text = ""
-	card.Size = UDim2.fromScale(0.23, 0.96)
-	card.BackgroundColor3 = house.color
-	card.BorderSizePixel = 0
-	card.Parent = row
-	corner(card, 14)
-	stroke(card, house.accent, 1.5)
-
-	local sigil = Instance.new("TextLabel")
-	sigil.BackgroundTransparency = 1
-	sigil.Position = UDim2.fromScale(0.08, 0.05)
-	sigil.Size = UDim2.fromScale(0.84, 0.16)
-	sigil.Font = Enum.Font.GothamBlack
-	sigil.Text = house.sigil
-	sigil.TextColor3 = house.ink
-	sigil.TextScaled = true
-	sigil.Parent = card
-
-	local name = Instance.new("TextLabel")
-	name.BackgroundTransparency = 1
-	name.Position = UDim2.fromScale(0.08, 0.23)
-	name.Size = UDim2.fromScale(0.84, 0.12)
-	name.Font = Enum.Font.Garamond
-	name.Text = house.name
-	name.TextColor3 = house.ink
-	name.TextScaled = true
-	name.Parent = card
-
-	local motto = Instance.new("TextLabel")
-	motto.BackgroundTransparency = 1
-	motto.Position = UDim2.fromScale(0.08, 0.37)
-	motto.Size = UDim2.fromScale(0.84, 0.1)
-	motto.Font = Enum.Font.GothamMedium
-	motto.Text = house.motto
-	motto.TextColor3 = house.ink
-	motto.TextTransparency = 0.15
-	motto.TextScaled = true
-	motto.Parent = card
-
-	local blurb = Instance.new("TextLabel")
-	blurb.BackgroundTransparency = 1
-	blurb.Position = UDim2.fromScale(0.08, 0.5)
-	blurb.Size = UDim2.fromScale(0.84, 0.28)
-	blurb.Font = Enum.Font.Gotham
-	blurb.Text = house.blurb
-	blurb.TextColor3 = house.ink
-	blurb.TextWrapped = true
-	blurb.TextYAlignment = Enum.TextYAlignment.Top
-	blurb.TextSize = 15
-	blurb.Parent = card
-
-	local bonus = Instance.new("TextLabel")
-	bonus.BackgroundTransparency = 0.35
-	bonus.BackgroundColor3 = Color3.new(0, 0, 0)
-	bonus.Position = UDim2.fromScale(0.08, 0.82)
-	bonus.Size = UDim2.fromScale(0.84, 0.12)
-	bonus.Font = Enum.Font.GothamBold
-	bonus.Text = house.bonus
-	bonus.TextColor3 = Color3.fromRGB(255, 244, 220)
-	bonus.TextScaled = true
-	bonus.Parent = card
-	corner(bonus, 6)
-
-	card.MouseButton1Click:Connect(function()
-		if busy or player:GetAttribute("HouseId") then
-			return
-		end
-		busy = true
-		ChooseHouse:FireServer(id)
-		task.delay(2, function()
-			if not player:GetAttribute("HouseId") then
-				busy = false
-			end
-		end)
-	end)
-end
-
-local function refreshPicker()
-	picker.Visible = player:GetAttribute("HouseId") == nil
-end
-player:GetAttributeChangedSignal("HouseId"):Connect(refreshPicker)
-refreshPicker()
-
--- HUD --------------------------------------------------------------------------
-
-local hud = Instance.new("Frame")
-hud.Name = "HUD"
-hud.Size = UDim2.fromScale(1, 1)
-hud.BackgroundTransparency = 1
-hud.Parent = gui
-
-local top = Instance.new("Frame")
-top.AnchorPoint = Vector2.new(0.5, 0)
-top.Position = UDim2.fromScale(0.5, 0.02)
-top.Size = UDim2.new(0.94, 0, 0, 74)
-top.BackgroundColor3 = Color3.fromRGB(16, 16, 20)
-top.BackgroundTransparency = 0.28
-top.BorderSizePixel = 0
-top.Parent = hud
-corner(top, 12)
-stroke(top, Color3.fromRGB(196, 168, 96), 1)
-
-local timerLabel = Instance.new("TextLabel")
-timerLabel.BackgroundTransparency = 1
-timerLabel.Position = UDim2.fromScale(0.04, 0.06)
-timerLabel.Size = UDim2.fromScale(0.42, 0.42)
-timerLabel.Font = Enum.Font.GothamBold
-timerLabel.TextXAlignment = Enum.TextXAlignment.Left
-timerLabel.Text = "8:00"
-timerLabel.TextColor3 = Color3.fromRGB(240, 230, 210)
-timerLabel.TextScaled = true
-timerLabel.Parent = top
-
-local nightLabel = Instance.new("TextLabel")
-nightLabel.BackgroundTransparency = 1
-nightLabel.Position = UDim2.fromScale(0.48, 0.08)
-nightLabel.Size = UDim2.fromScale(0.48, 0.38)
-nightLabel.Font = Enum.Font.Gotham
-nightLabel.TextXAlignment = Enum.TextXAlignment.Right
-nightLabel.Text = "Dusk"
-nightLabel.TextColor3 = Color3.fromRGB(180, 190, 210)
-nightLabel.TextScaled = true
-nightLabel.Parent = top
-
-local claimRow = Instance.new("Frame")
-claimRow.BackgroundTransparency = 1
-claimRow.Position = UDim2.fromScale(0.04, 0.52)
-claimRow.Size = UDim2.fromScale(0.92, 0.4)
-claimRow.Parent = top
-local claimLayout = Instance.new("UIListLayout")
-claimLayout.FillDirection = Enum.FillDirection.Horizontal
-claimLayout.Padding = UDim.new(0.02, 0)
-claimLayout.Parent = claimRow
-
-local claimLabels = {}
-for _, id in ipairs(Config.HouseOrder) do
-	local house = Config.Houses[id]
-	local chip = Instance.new("TextLabel")
-	chip.BackgroundColor3 = house.color
-	chip.BackgroundTransparency = 0.15
-	chip.Size = UDim2.fromScale(0.235, 1)
-	chip.Font = Enum.Font.GothamBold
-	chip.Text = house.sigil .. " 0"
-	chip.TextColor3 = house.ink
-	chip.TextScaled = true
-	chip.Parent = claimRow
-	corner(chip, 6)
-	claimLabels[id] = chip
-end
-
-local objective = Instance.new("TextLabel")
-objective.AnchorPoint = Vector2.new(0.5, 0)
-objective.Position = UDim2.new(0.5, 0, 0.02, 86)
-objective.Size = UDim2.new(0.92, 0, 0, 28)
-objective.BackgroundTransparency = 1
-objective.Font = Enum.Font.GothamMedium
-objective.Text = "Swear to a house."
-objective.TextColor3 = Color3.fromRGB(236, 226, 206)
-objective.TextStrokeTransparency = 0.4
-objective.TextScaled = true
-objective.Parent = hud
-
-local healthBack = Instance.new("Frame")
-healthBack.AnchorPoint = Vector2.new(0, 1)
-healthBack.Position = UDim2.new(0, 16, 1, -18)
-healthBack.Size = UDim2.fromOffset(240, 22)
-healthBack.BackgroundColor3 = Color3.fromRGB(20, 16, 16)
-healthBack.BorderSizePixel = 0
-healthBack.Parent = hud
-corner(healthBack, 6)
-
-local healthFill = Instance.new("Frame")
-healthFill.Size = UDim2.fromScale(1, 1)
-healthFill.BackgroundColor3 = Color3.fromRGB(176, 48, 48)
-healthFill.BorderSizePixel = 0
-healthFill.Parent = healthBack
-corner(healthFill, 6)
-
-local healthText = Instance.new("TextLabel")
-healthText.BackgroundTransparency = 1
-healthText.Size = UDim2.fromScale(1, 1)
-healthText.Font = Enum.Font.GothamBold
-healthText.Text = "100"
-healthText.TextColor3 = Color3.new(1, 1, 1)
-healthText.TextScaled = true
-healthText.ZIndex = 2
-healthText.Parent = healthBack
-
-local coinLabel = Instance.new("TextLabel")
-coinLabel.AnchorPoint = Vector2.new(0, 1)
-coinLabel.Position = UDim2.new(0, 16, 1, -46)
-coinLabel.Size = UDim2.fromOffset(220, 24)
-coinLabel.BackgroundTransparency = 1
-coinLabel.Font = Enum.Font.GothamBold
-coinLabel.TextXAlignment = Enum.TextXAlignment.Left
-coinLabel.Text = "0 coins"
-coinLabel.TextColor3 = Color3.fromRGB(232, 196, 96)
-coinLabel.TextScaled = true
-coinLabel.Parent = hud
-
-local hint = Instance.new("TextLabel")
-hint.AnchorPoint = Vector2.new(0.5, 1)
-hint.Position = UDim2.new(0.5, 0, 1, -16)
-hint.Size = UDim2.new(0.7, 0, 0, 22)
-hint.BackgroundTransparency = 1
-hint.Font = Enum.Font.Gotham
-hint.Text = "Click strike    ·    Hold Q guard"
-hint.TextColor3 = Color3.fromRGB(210, 210, 216)
-hint.TextStrokeTransparency = 0.5
-hint.TextScaled = true
-hint.Parent = hud
-
-local cross = Instance.new("Frame")
-cross.AnchorPoint = Vector2.new(0.5, 0.5)
-cross.Position = UDim2.fromScale(0.5, 0.5)
-cross.Size = UDim2.fromOffset(8, 8)
-cross.BackgroundColor3 = Color3.fromRGB(255, 244, 230)
-cross.BackgroundTransparency = 0.25
-cross.BorderSizePixel = 0
-cross.Parent = hud
-corner(cross, 8)
-
--- Minimap
-local mapFrame = Instance.new("Frame")
-mapFrame.AnchorPoint = Vector2.new(1, 0)
-local cap = Instance.new("UISizeConstraint")
-cap.MaxSize = Vector2.new(640, 74)
-cap.Parent = top
-
-mapFrame.Position = UDim2.new(1, -12, 0, 98)
-mapFrame.Size = UDim2.fromOffset(168, 168)
-mapFrame.BackgroundColor3 = Color3.fromRGB(18, 28, 22)
-mapFrame.BackgroundTransparency = 0.2
-mapFrame.BorderSizePixel = 0
-mapFrame.Parent = hud
-corner(mapFrame, 12)
-stroke(mapFrame, Color3.fromRGB(180, 170, 130), 1)
-
-local mapTitle = Instance.new("TextLabel")
-mapTitle.BackgroundTransparency = 1
-mapTitle.Size = UDim2.new(1, 0, 0, 18)
-mapTitle.Font = Enum.Font.GothamBold
-mapTitle.Text = "VAELMARK"
-mapTitle.TextColor3 = Color3.fromRGB(220, 210, 180)
-mapTitle.TextSize = 12
-mapTitle.Parent = mapFrame
-
-local dots = {}
-local function makeDot(name, color, size)
-	local dot = Instance.new("Frame")
-	dot.Name = name
-	dot.AnchorPoint = Vector2.new(0.5, 0.5)
-	dot.Size = UDim2.fromOffset(size or 8, size or 8)
-	dot.BackgroundColor3 = color
-	dot.BorderSizePixel = 0
-	dot.Parent = mapFrame
-	corner(dot, size or 8)
-	dots[name] = dot
-	return dot
-end
-
-for _, info in ipairs(Config.Banners) do
-	makeDot("Banner_" .. info.id, Color3.fromRGB(180, 180, 180), 10)
-end
-makeDot("Throne", Color3.fromRGB(255, 186, 70), 9)
-makeDot("You", Color3.fromRGB(255, 255, 255), 8)
-
-local function worldToMap(pos)
-	local bounds = Config.MapBounds
-	local x = (pos.X - bounds.minX) / (bounds.maxX - bounds.minX)
-	local z = (pos.Z - bounds.minZ) / (bounds.maxZ - bounds.minZ)
-	return math.clamp(x, 0.04, 0.96), math.clamp(z, 0.12, 0.96)
-end
-
--- Toast
-local toastLabel = Instance.new("TextLabel")
-toastLabel.AnchorPoint = Vector2.new(0.5, 0)
-toastLabel.Position = UDim2.fromScale(0.5, 0.2)
-toastLabel.Size = UDim2.fromOffset(680, 48)
-toastLabel.BackgroundColor3 = Color3.fromRGB(12, 12, 16)
-toastLabel.BackgroundTransparency = 1
-toastLabel.Font = Enum.Font.Garamond
-toastLabel.Text = ""
-toastLabel.TextColor3 = Color3.fromRGB(244, 232, 206)
-toastLabel.TextTransparency = 1
-toastLabel.TextScaled = true
-toastLabel.Parent = hud
-corner(toastLabel, 10)
-
-local toastToken = 0
-local function showToast(text)
-	toastToken += 1
-	local token = toastToken
-	toastLabel.Text = text
-	toastLabel.TextTransparency = 0
-	toastLabel.BackgroundTransparency = 0.28
-	task.delay(4.2, function()
-		if toastToken == token then
-			toastLabel.TextTransparency = 1
-			toastLabel.BackgroundTransparency = 1
-		end
-	end)
-end
-
-Toast.OnClientEvent:Connect(showToast)
-
-HitFx.OnClientEvent:Connect(function(worldPos, amount)
-	local billboard = Instance.new("BillboardGui")
-	billboard.Size = UDim2.fromOffset(80, 36)
-	billboard.AlwaysOnTop = true
-	billboard.StudsOffset = Vector3.new(0, 0, 0)
-	billboard.Adornee = nil
-	local anchor = Instance.new("Part")
-	anchor.Anchored = true
-	anchor.CanCollide = false
-	anchor.Transparency = 1
-	anchor.Size = Vector3.new(0.2, 0.2, 0.2)
-	anchor.Position = worldPos
-	anchor.Parent = workspace
-	billboard.Adornee = anchor
-	billboard.Parent = anchor
-	local label = Instance.new("TextLabel")
-	label.BackgroundTransparency = 1
-	label.Size = UDim2.fromScale(1, 1)
-	label.Font = Enum.Font.GothamBlack
-	label.Text = tostring(amount)
-	label.TextColor3 = Color3.fromRGB(255, 220, 160)
-	label.TextScaled = true
-	label.Parent = billboard
-	local rise = TweenService:Create(anchor, TweenInfo.new(0.6), { Position = worldPos + Vector3.new(0, 3, 0) })
-	rise:Play()
-	task.delay(0.6, function()
-		anchor:Destroy()
-	end)
-end)
-
--- Mobile buttons
-local touch = UserInputService.TouchEnabled
-local swingButton, guardButton
-if touch then
-	swingButton = Instance.new("TextButton")
-	swingButton.AnchorPoint = Vector2.new(1, 1)
-	swingButton.Position = UDim2.new(1, -24, 1, -36)
-	swingButton.Size = UDim2.fromOffset(92, 92)
-	swingButton.BackgroundColor3 = Color3.fromRGB(150, 36, 36)
-	swingButton.Font = Enum.Font.GothamBold
-	swingButton.Text = "STRIKE"
-	swingButton.TextColor3 = Color3.new(1, 1, 1)
-	swingButton.TextScaled = true
-	swingButton.Parent = hud
-	corner(swingButton, 46)
-
-	guardButton = Instance.new("TextButton")
-	guardButton.AnchorPoint = Vector2.new(1, 1)
-	guardButton.Position = UDim2.new(1, -130, 1, -48)
-	guardButton.Size = UDim2.fromOffset(84, 84)
-	guardButton.BackgroundColor3 = Color3.fromRGB(40, 48, 64)
-	guardButton.Font = Enum.Font.GothamBold
-	guardButton.Text = "GUARD"
-	guardButton.TextColor3 = Color3.new(1, 1, 1)
-	guardButton.TextScaled = true
-	guardButton.Parent = hud
-	corner(guardButton, 42)
-	hint.Visible = false
-end
-
--- Combat input ----------------------------------------------------------------
-
-local lastLocalSwing = 0
-local blocking = false
-
-local function canFight()
-	return player:GetAttribute("HouseId") ~= nil and picker.Visible == false
-end
-
-local function swing()
-	if not canFight() then
-		return
-	end
-	local now = os.clock()
-	if now - lastLocalSwing < 0.5 then
-		return
-	end
-	lastLocalSwing = now
-	Swing:FireServer()
-	local character = player.Character
-	local root = character and character:FindFirstChild("HumanoidRootPart")
-	if root then
-		local slash = Instance.new("Part")
-		slash.Anchored = true
-		slash.CanCollide = false
-		slash.Material = Enum.Material.Neon
-		slash.Color = Color3.fromRGB(255, 236, 210)
-		slash.Size = Vector3.new(0.2, 3.2, 0.2)
-		slash.CFrame = root.CFrame * CFrame.new(0.8, 1, -2.4) * CFrame.Angles(0, 0, math.rad(70))
-		slash.Parent = workspace
-		task.delay(0.12, function()
-			slash:Destroy()
-		end)
-	end
-end
-
-local function setBlock(on)
-	if blocking == on then
-		return
-	end
-	blocking = on
-	if canFight() then
-		Block:FireServer(on)
-	end
-	cross.BackgroundColor3 = on and Color3.fromRGB(120, 180, 255) or Color3.fromRGB(255, 244, 230)
-end
-
-UserInputService.InputBegan:Connect(function(input, processed)
-	if processed then
-		return
-	end
-	if input.UserInputType == Enum.UserInputType.MouseButton1 then
-		swing()
-	elseif input.KeyCode == Enum.KeyCode.Q then
-		setBlock(true)
-	elseif input.KeyCode == Enum.KeyCode.ButtonR2 then
-		swing()
-	elseif input.KeyCode == Enum.KeyCode.ButtonL2 then
-		setBlock(true)
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.Q or input.KeyCode == Enum.KeyCode.ButtonL2 then
-		setBlock(false)
-	end
-end)
-
-if swingButton then
-	swingButton.MouseButton1Click:Connect(swing)
-end
-if guardButton then
-	guardButton.MouseButton1Down:Connect(function()
-		setBlock(true)
-	end)
-	guardButton.MouseButton1Up:Connect(function()
-		setBlock(false)
-	end)
-	guardButton.MouseLeave:Connect(function()
-		setBlock(false)
-	end)
-end
-
-local function equipSword()
-	local character = player.Character
-	if not character then
-		return
-	end
-	local humanoid = character:FindFirstChildOfClass("Humanoid")
-	if not humanoid then
-		return
-	end
-	local tool = character:FindFirstChildOfClass("Tool")
-	if tool then
-		return
-	end
-	local backpack = player:FindFirstChild("Backpack")
-	tool = backpack and backpack:FindFirstChildOfClass("Tool")
-	if tool then
-		humanoid:EquipTool(tool)
-	end
-end
-
-player.CharacterAdded:Connect(function()
-	setBlock(false)
-	task.delay(0.4, equipSword)
-end)
-
--- HUD heartbeat ----------------------------------------------------------------
-
-local function formatTime(seconds)
-	seconds = math.max(0, math.floor(seconds + 0.5))
-	local m = math.floor(seconds / 60)
-	local s = seconds % 60
-	return string.format("%d:%02d", m, s)
-end
-
-local function refreshHud()
-	local houseId = player:GetAttribute("HouseId")
-	hud.Visible = houseId ~= nil
-	cross.Visible = houseId ~= nil
-
-	local ends = matchFolder:GetAttribute("RoundEnds") or 0
-	local remain = ends - workspace:GetServerTimeNow()
-	local live = matchFolder:GetAttribute("RoundLive")
-	if live == false then
-		timerLabel.Text = "INTERMISSION"
-	else
-		timerLabel.Text = formatTime(remain)
-	end
-
-	local clock = Lighting.ClockTime
-	local night = clock >= 18 or clock < 6
-	nightLabel.Text = night and "Night — Frostholm cuts deeper" or "Day"
-	nightLabel.TextColor3 = night and Color3.fromRGB(150, 196, 230) or Color3.fromRGB(230, 200, 140)
-
-	local owned = 0
-	for _, id in ipairs(Config.HouseOrder) do
-		local n = matchFolder:GetAttribute("Claims_" .. id) or 0
-		claimLabels[id].Text = Config.Houses[id].sigil .. " " .. tostring(n)
-		if id == houseId then
-			-- count banners below
-		end
-	end
-	for _, info in ipairs(Config.Banners) do
-		local owner = matchFolder:GetAttribute("Banner_" .. info.id) or "Neutral"
-		local dot = dots["Banner_" .. info.id]
-		local mx, my = worldToMap(info.position)
-		dot.Position = UDim2.fromScale(mx, my)
-		if owner ~= "Neutral" and Config.Houses[owner] then
-			dot.BackgroundColor3 = Config.Houses[owner].color
-			if owner == houseId then
-				owned += 1
-			end
-		else
-			dot.BackgroundColor3 = Color3.fromRGB(190, 190, 190)
-		end
-	end
-
-	local tx, ty = worldToMap(Config.ThronePosition)
-	dots.Throne.Position = UDim2.fromScale(tx, ty)
-
-	local character = player.Character
-	local root = character and character:FindFirstChild("HumanoidRootPart")
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-	if root then
-		local px, py = worldToMap(root.Position)
-		dots.You.Position = UDim2.fromScale(px, py)
-	end
-	if humanoid then
-		local ratio = math.clamp(humanoid.Health / math.max(1, humanoid.MaxHealth), 0, 1)
-		healthFill.Size = UDim2.fromScale(ratio, 1)
-		healthText.Text = tostring(math.ceil(humanoid.Health))
-		if ratio < 0.35 then
-			healthFill.BackgroundColor3 = Color3.fromRGB(210, 60, 50)
-		else
-			healthFill.BackgroundColor3 = Color3.fromRGB(176, 64, 58)
-		end
-	end
-
-	local stats = player:FindFirstChild("leaderstats")
-	local coins = stats and stats:FindFirstChild("Coins")
-	coinLabel.Text = tostring(coins and coins.Value or 0) .. " coins"
-
-	local winner = matchFolder:GetAttribute("Winner")
-	if live == false and winner and winner ~= "" and Config.Houses[winner] then
-		objective.Text = Config.Houses[winner].name .. " holds the realm."
-	elseif not houseId then
-		objective.Text = "Swear to a house."
-	elseif owned >= Config.ThroneBannersNeeded then
-		objective.Text = "You hold " .. owned .. " banners. Stand on the Cinder Seat."
-	else
-		objective.Text = "Raise banners (" .. owned .. "/" .. Config.ThroneBannersNeeded .. "). Rings are marked on the map."
-	end
-
-	local throneHouse = matchFolder:GetAttribute("ThroneHouse")
-	local throneProgress = matchFolder:GetAttribute("ThroneProgress") or 0
-	if throneHouse == houseId and throneProgress > 0.02 then
-		objective.Text = "Holding the Cinder Seat… " .. tostring(math.floor(throneProgress * 100)) .. "%"
-	end
-end
-
-task.spawn(function()
-	while true do
-		refreshHud()
-		task.wait(0.15)
-	end
-end)
-
-print("[Ashen Realm] Client ready.")
-]]></ProtectedString></Properties>
 </Item>
 </Item>
-</Item>
-
 </roblox>
